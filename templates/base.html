@@ -22,6 +22,14 @@
 	Main content
 	{% endblock %}
 
+    {% block footer %}
+    <footer>
+        <span class="copy"><a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/deed.en_US"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-sa/3.0/80x15.png" /></a> <span xmlns:dct="http://purl.org/dc/terms/" property="dct:title">blog.selfassembled.org</span> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/deed.en_US">Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License</a>.</span><br>
+        All code examples Copyright &copy; 2012 Updater, Inc. Released under the <a href="http://opensource.org/licenses/MIT">MIT Licence</a><br>
+        Site built using <a href="https://github.com/koenbok/Cactus">Cactus</a>
+    </footer>
+    {% endblock %}
+
 	{% block scripts %}
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
 	<script src="{{ STATIC_URL }}/js/main.js"></script>
