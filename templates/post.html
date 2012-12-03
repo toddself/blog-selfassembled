@@ -20,7 +20,7 @@
     <h1>Recent posts</h1>
     <ul>
     {% for recent in recent_posts %}
-        <li><a href="{{ ROOT_URL }}/{{ post.path }}">{{ recent.title }}</a>
+        <li><a href="{{ ROOT_URL }}/{{ recent.path }}">{{ recent.title }}</a>
     {% endfor %}
     </ul>
 </nav>
