@@ -1,39 +1,37 @@
 {% extends "base.html" %}
-
 {% block content %}
-<nav>
-    <span class="prev">
-        {% if prevPost %}
-            <a href='{{ ROOT_URL }}/{{ prevPost.path }}'>
-                &laquo; {{ prevPost.title }}
-            </a>
-        {% else %}
-            First post
-        {% endif %}
-    </span>
+<header><a href="/">blog.selfassembled.org</a></header>
 
-    <span>
-        <a href="/">Home</a>
-    </span>
-
-    <span class="next">
-        {% if nextPost %}
-            <a href='{{ ROOT_URL }}/{{ nextPost.path }}'>
-                {{ nextPost.title }} &raquo;
-            </a>
-        {% else %}
-            Last post
-        {% endif %}
-    </span>
-</nav>
 <article>
-    <header>
-        <h1>{{ title }}</h1>
-        <h5><time pubdate="pubdate">{{ date|date:"F j, Y" }}</time> by <span class="author">{{ author }}</address></h5>
-    </header>
+    <h1 class="inline">{{ title }}</h1>
+    <h5 class="inline"><time pubdate="pubdate">{{ date|date:"F j, Y" }}</time></h5>
+    <br style="clear: both;">
+    <section class="post">
         {% block body %}{% endblock %}
+    </section>
     <footer>
-        Thanks for reading. Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+
     </footer>
 </article>
+<nav>
+    <article>
+        <span class="prev">
+            {% if prevPost %}
+                <a href='{{ ROOT_URL }}/{{ prevPost.path }}'>
+                    &laquo; {{ prevPost.title }}
+                </a>
+            {% endif %}
+        </span>
+
+        <span class="next">
+            {% if nextPost %}
+                <a href='{{ ROOT_URL }}/{{ nextPost.path }}'>
+                    {{ nextPost.title }} &raquo;
+                </a>
+            {% else %}
+                Last post
+            {% endif %}
+        </span>
+    </article>
+</nav>
 {% endblock %}

@@ -1,14 +1,12 @@
 {% extends "base.html" %}
 {% block content %}
-<h1>Hello, welcome to my blog.</h1>
-<h2>This is where I write.</h2>
+<header>blog.selfassembled.org</header>
 
 <ul>
     {% for post in posts %}
     <li>
-        <b><a href='{{ ROOT_URL }}/{{ post.path }}'>{{ post.title }}</a></b>
-        by {{ post.author }} at {{ post.date|date:"F j Y" }}
-    </li>
+        <b><a href='{{ ROOT_URL }}/{{ post.path }}'>{{ post.title }}</a></b> {{ post.date|date:"F j Y" }}
+
     {% endfor %}
 </ul>
 

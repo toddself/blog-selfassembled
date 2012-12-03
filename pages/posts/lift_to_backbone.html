@@ -8,8 +8,6 @@ date: 03-12-2012
 {% load markup %}
 {% filter markdown %}
 
-#From Lift to Backbone.
-
 I want everyone reading this to raise their hand if they're a Scala developer.  If you're also a Lift developer, raise your other hand. If you've got both hands up, I am impressed. It's a rare combination.
 
 When I started at Updater (only a few short months ago!) our site was built on top of the [Lift](http://liftweb.net/) framework for Scala. Lift is an interesting tool; it's primary motivation seems to be to get your backend developers to be able to operate without frontend developers (to a point). It does a lot of obfuscation of the DOM upon building the page (ostensibly for security purposes, but I'd argue obfuscation is not security), which makes it tremendously difficult to manipulate the page after it's been rendered in pure javascript -- the point being to write all your code in Scala/Lift and let them worry about the front end interaction.
@@ -22,10 +20,10 @@ As anyone interested in building software for the web at this point has heard ja
 
 For our new site launch we decided to go with Backbone for a number of reasons.
 
-    1. Maturity.  Backbone is already used on a whole host of sites people use thoughout the day.
-    2. Small footprint. The code base is small enough (1400 lines of code including comments) that you can easy read it and understand eveything it does.
-    3. Minimal dependencies. It requires a DOM manipulation library (we are already using jQuery) and [Underscore](http://underscorejs.org). Writing javascript without some sort of shim for older browsers to handle things like `.forEach` and `.filter` is hard enough, so Underscore would already be in our stack.
-    4. Lack of rigidity. Rewriting an entire site from scratch means you're going to be re-inventing the wheel several times over, and trying to replicate, at times, existing use patterns. Backbone prescribes no usage pattern for how you assemble it bits and pieces together.  It's not an MVC framework.  It's not an MVP framework.  In fact, I'd hesitate to call it a framework; it's really just a code library that forces you into no behavior. When you're rapidly changing core assumptions about how your application works, this is a really good thing.
+1. Maturity.  Backbone is already used on a whole host of sites people use thoughout the day.
+2. Small footprint. The code base is small enough (1400 lines of code including comments) that you can easy read it and understand eveything it does.
+3. Minimal dependencies. It requires a DOM manipulation library (we are already using jQuery) and [Underscore](http://underscorejs.org). Writing javascript without some sort of shim for older browsers to handle things like `.forEach` and `.filter` is hard enough, so Underscore would already be in our stack.
+4. Lack of rigidity. Rewriting an entire site from scratch means you're going to be re-inventing the wheel several times over, and trying to replicate, at times, existing use patterns. Backbone prescribes no usage pattern for how you assemble it bits and pieces together.  It's not an MVC framework.  It's not an MVP framework.  In fact, I'd hesitate to call it a framework; it's really just a code library that forces you into no behavior. When you're rapidly changing core assumptions about how your application works, this is a really good thing.
 
 The downside to using a library vs using a framework is that you will end up writing a lot more boilerplate code than you would had you decided to go with another codebase. This can be helpful when debugging however; the more code you've written the more code you'll innately understand and the easier it will be figure out whats going on when the system breaks. (See: [The Law of Leaky Abstractions](http://www.joelonsoftware.com/articles/LeakyAbstractions.html)).
 
