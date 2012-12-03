@@ -38,7 +38,7 @@
         <ul>
         {% for recent in recent_posts %}
             <li><a href="{{ ROOT_URL }}/{{ recent.path }}">{{ recent.title }}</a><br>
-                <span class="recent_date">posted on {{ recent.date|date:"F j, Y" }}</span>
+                <span class="recent_date">posted on {{ recent.date|date:"F j, Y" }} at {{ recent.date|date:"g:i a" }}</span>
         {% endfor %}
         </ul>
     </nav>

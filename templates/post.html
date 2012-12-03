@@ -18,7 +18,7 @@
 {% block content %}
 <article>
     <h1 class="inline">{{ title }}</h1>
-    <h5 class="inline"><time pubdate="pubdate">{{ date|date:"F j, Y" }}</time></h5>
+    <h5 class="inline"><time pubdate="pubdate">{{ date|date:"F j, Y g:i a" }}</time></h5>
     <br style="clear: both;">
     <section class="post">
         {% block body %}{% endblock %}
