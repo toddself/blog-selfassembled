@@ -50,7 +50,8 @@ article {
         padding: 2px;
         margin: 0;
     }
-    h2 {
+
+    h2, h3 {
         font-family: 'Rambla', sans-serif;
         font-weight: 700;
         padding: 2px;
@@ -63,9 +64,25 @@ article {
 
     pre {
         code {
-            width: 100%;
+            width: 95%;
             padding: 12px 15px 15px 15px;
             overflow: auto;
+            background: #fff;
+            border: 1px solid #ddd;
+        }
+    }
+
+    blockquote {
+        background: #ddd;
+        padding: 5px 10px 5px 10px;
+        margin: 15px 0 15px 15px;
+        border-radius: 5px;
+        font-style: italic;
+        float: right;
+        width: 30%;
+        &:after{
+            content: "";
+            clear: both;
         }
     }
 
@@ -114,7 +131,7 @@ article {
 
 nav#main {
     right: 40px;
-    width: 200px;
+    width: 300px;
     border-radius: 5px;
     border: 1px solid black;
     background: #AAA;
@@ -136,6 +153,11 @@ nav#main {
             margin: 0;
             padding: 0;
         }
+    }
+
+    .recent_date {
+        display: inline-block;
+        margin: 0 0 0 10px;
     }
 
 }

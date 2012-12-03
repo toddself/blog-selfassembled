@@ -33,6 +33,16 @@
         <span class="links">&#187; <a href="https://twitter.com/whale_eat_squid">twitter</a></span>
     </header>
 
+    <nav id="main">
+        <h1>Recent posts</h1>
+        <ul>
+        {% for recent in recent_posts %}
+            <li><a href="{{ ROOT_URL }}/{{ recent.path }}">{{ recent.title }}</a><br>
+                <span class="recent_date">posted on {{ recent.date|date:"F j, Y" }}</span>
+        {% endfor %}
+        </ul>
+    </nav>
+
 	{% block content %}
 	Main content
 	{% endblock %}

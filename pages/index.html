@@ -1,15 +1,5 @@
 {% extends "base.html" %}
 {% block content %}
-
-<nav id="main">
-    <h1>Recent posts</h1>
-    <ul>
-    {% for recent in recent_posts %}
-        <li><a href="{{ ROOT_URL }}/{{ recent.path }}">{{ recent.title }}</a>
-    {% endfor %}
-    </ul>
-</nav>
-
 <ul>
     {% for post in posts %}
     <li class="no_disc">
@@ -21,6 +11,7 @@
                 {{ post.body }}
             </section>
         </article>
+        <br style="clear: both">
     {% endfor %}
 </ul>
 {% endblock %}
