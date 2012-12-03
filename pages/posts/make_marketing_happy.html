@@ -44,10 +44,15 @@ If we're going to be worried about the performance of our pages building and ren
 
 This means that you should be rendering ALL of your HTML before you send it down the pipe. This way a user can interact with your page almost immediately &#151; before the DOM ready event even fires the user can start entering data into forms.
 
+This means we shouldn't just be sending this:
+
+<script src="https://gist.github.com/4198793.js"> </script>
+
 ### With Great Power Comes Hard Work
 
 So if this so great, why don't we do it yet? Because, well, frankly, it's hard. This means that you need to write your application with the mindset that it *might* not have to render the pages it's responsible for. You have to make it so your client-side templates can also be rendered by your server's page language (which, Dust.JS cannot be, at least by Scala). You also need to take into account that the user might enter data and try to interact with the page before the appropriate listeners/handlers have been attached.
 
-We are working hard on this though, so stay tuned!
+We're currently prototyping out some solutions to use to solve this problem, mostly around [Node](http://nodejs.org) since that would enable us to keep our current templating language, pre-render the content and still bootstrap the user data before we send it down.
+
 {% endfilter %}
 {% endblock %}
