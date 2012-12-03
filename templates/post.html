@@ -20,7 +20,7 @@
     <h1>Recent posts</h1>
     <ul>
     {% for recent in recent_posts %}
-        <li><a href="{{ ROOT_URL}}/{{ post.path}}">{{ recent.title }}</a>
+        <li><a href="{{ ROOT_URL }}/{{ post.path }}">{{ recent.title }}</a>
     {% endfor %}
     </ul>
 </nav>
@@ -38,16 +38,18 @@
                 <a href='{{ ROOT_URL }}/{{ prevPost.path }}'>
                     &laquo; {{ prevPost.title }}
                 </a>
+            {% else %}
+                Earliest post
             {% endif %}
         </span>
-
+        &nbsp;|&nbsp;
         <span class="next">
             {% if nextPost %}
                 <a href='{{ ROOT_URL }}/{{ nextPost.path }}'>
                     {{ nextPost.title }} &raquo;
                 </a>
             {% else %}
-                Last post
+                Latest post
             {% endif %}
         </span>
     </nav>

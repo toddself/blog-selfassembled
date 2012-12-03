@@ -50,6 +50,11 @@ article {
         padding: 2px;
         margin: 0;
     }
+    h2 {
+        font-family: 'Rambla', sans-serif;
+        font-weight: 700;
+        padding: 2px;
+    }
 
     h5 {
         margin: 0;
@@ -88,6 +93,21 @@ article {
 
         span.next {
             text-align: right;
+        }
+
+        a {
+            color: #fff;
+        }
+    }
+
+    img {
+        .center {
+            display: block;
+            margin: 0 auto;
+        }
+        .right {
+            float: right;
+            margin: 5px;
         }
     }
 }

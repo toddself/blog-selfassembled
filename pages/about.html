@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block content %}
+
+<nav id="main">
+    <h1>Recent posts</h1>
+    <ul>
+    {% for recent in recent_posts %}
+        <li><a href="{{ ROOT_URL}}/{{ post.path}}">{{ recent.title }}</a>
+    {% endfor %}
+    </ul>
+</nav>
+
+<article>
+{% load markup %}
+{% filter markdown %}
+# Colophon
+This site is built on top of <a href="https://github.com/koenbok/Cactus">Cactus</a> and uses <a href="http://aws.amazon.com">S3</a> to serve itself.
+
+## Fonts
+The headers are Rambla 700 and source code is Source Code Pro, both from Google Web Fonts
+
+{% endfilter %}
+</article>
+
+{% endblock %}
