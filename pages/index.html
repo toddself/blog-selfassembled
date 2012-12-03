@@ -4,9 +4,18 @@
 
 <ul>
     {% for post in posts %}
-    <li>
-        <b><a href='{{ ROOT_URL }}/{{ post.path }}'>{{ post.title }}</a></b> {{ post.date|date:"F j Y" }}
+    <li class="no_disc">
+        <article>
+            <h1 class="inline"><a href="{{ ROOT_URL }}/{{ post.path }}">{{ post.title }}</a></h1>
+            <h5 class="inline"><time pubdate="pubdate">{{ post.date|date:"F j, Y" }}</time></h5>
+            <br style="clear: both;">
+            <section class="post">
+                {{ post.body }}
+            </section>
+            <footer>
 
+            </footer>
+        </article>
     {% endfor %}
 </ul>
 
