@@ -52,6 +52,10 @@ def preBuild(site):
             postContext['author'] = find('author')
             postContext['date'] = find('date')
             postContext['path'] = page.path
+            postContext['description'] = find('description')
+            postContext['keywords'] = find('keywords')
+            postContext['image'] = find('image')
+            postContext['modified'] = datetime.datetime.now()
 
             # Parse the date into a date object
             try:
@@ -79,6 +83,7 @@ def preBuildPage(site, page, context, data):
     access them from wherever on the site.
     """
     context['posts'] = POSTS
+    context['recent_posts'] = POSTS[0:5]
 
     for post in POSTS:
         if post['path'] == page.path:

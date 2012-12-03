@@ -1,6 +1,29 @@
 {% extends "base.html" %}
+{% block header %}
+    <meta content="{{ title }}" name="title">
+    <meta content="{{ description }}" name="description">
+    <meta content="{{ keywords }}" name="keywords">
+    <meta property="og:title" content="{{ title }}">
+    <meta property="og:type" content="article">
+    {% if image %}<meta property="og:image" content="{{ image }}">{% endif %}
+    <meta property="og:url" content="http://blog.selfassembled.org/{{ path }}">
+    <meta property="og:description" content="{{ description }}">
+    <meta property="article:published_time" content="{{ date|date:'c' }}">
+    <meta property="article:modified_time" content="{{ modified|date:'c' }}">
+    <meta property="article:author" content="{{ author }}">
+    <meta property="article:tag" content="{{ keywords}}">
+    <title>{{ title }} &#171; selfassembled.org</title>
+{% endblock %}
+
 {% block content %}
-<header><a href="/">blog.selfassembled.org</a></header>
+<nav id="main">
+    <h1>Recent posts</h1>
+    <ul>
+    {% for recent in recent_posts %}
+        <li><a href="{{ ROOT_URL}}/{{ post.path}}">{{ recent.title }}</a>
+    {% endfor %}
+    </ul>
+</nav>
 
 <article>
     <h1 class="inline">{{ title }}</h1>
@@ -9,9 +32,7 @@
     <section class="post">
         {% block body %}{% endblock %}
     </section>
-</article>
-<nav>
-    <article>
+    <nav>
         <span class="prev">
             {% if prevPost %}
                 <a href='{{ ROOT_URL }}/{{ prevPost.path }}'>
@@ -29,6 +50,6 @@
                 Last post
             {% endif %}
         </span>
-    </article>
-</nav>
+    </nav>
+</article>
 {% endblock %}

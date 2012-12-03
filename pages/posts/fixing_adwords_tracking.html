@@ -1,0 +1,35 @@
+title: Fixing Adwords Tracking
+author: Todd Kennedy
+date: 04-12-2012
+keywords: backbone, router, adwords, gclid, conversion, tracking
+description: How we fixed tracking conversions coming in from Adwords while using a HTML5-history object based router
+
+{% extends "post.html" %}
+{% block body %}
+
+{% load markup %}
+{% filter markdown %}
+
+*Preface: I'm not an SEO/SEM/conversions/adwords/etc expert.*
+
+As a small start-up (I think I'm supposed to use some lofty adjective like agile or product-focused or something of the ilk) that isn't just doing it for pure technology sake, we have several key metrics that we have to track, all around converting people who come to our site into users. (This should sound familar for anyone with a site that allows sign up.)
+
+One of the tools we use to drive traffic to our site is Google AdWords. I'd like to tell you more about how and why we use this tool, but I'll be honest &#151; after several years trying to [squeeze advertising money](http://web.archive.org/web/20010331084018/http://angelfire.lycos.com/doc/about.html) out [of a stone](http://web.archive.org/web/20010407085103/http://angelfire.lycos.com/doc/staff3.html#todd) (and yes, that is me in the cheese hat) at an early internet company and writing more than one script to try to defeat early pop-up blockers, [I have sworn off internet advertising](http://web.archive.org/web/20010331084018/http://angelfire.lycos.com/doc/about.html)). Given this history I'm probably the least-well-versed member of the office in how AdWords works.
+
+So when we [re-launched our new site](https://updater.com) on top of Backbone we noticed one thing right off the bat -- we were no longer able to track whether or not people had arrived at our site via AdWords or via other methods.
+
+After some quick inquiries, it looks like Google Analytics is able to track users from AdWords based on URL parameters appended to the URL when the click on the ad, most importantly the `gclid` parameter. Normally this isn't an issue, but since we're building a single-paged app, this presents a bit of difficulty; when a user arrives at the application, we are using the [Backbone router/history](http://backbonejs.org/#Router) to control the URLs so we don't break the back button. Whenever you call `.navigate` though this strips out the URL parameters (and any hash fragements) and rewrites the URL to what you've specified.
+
+After confirming with the Google AdWords/Analytics folks that there's no way to set the `gclid` manually in the tracking calls, the only option we had was to not call `.navigate` on the first load of the application.
+
+    var first_run = true;
+    if(!first_run){
+        history.navigate('/mypage');
+    } else {
+        first_run = false;
+    }
+
+This allows the `gclid` parameter to stay in the URL long enough to record the conversion event.
+
+{% endfilter %}
+{% endblock %}

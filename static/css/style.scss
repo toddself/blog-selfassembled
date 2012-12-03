@@ -1,0 +1,149 @@
+body {
+    font-size: 11pt;
+    font-family: Helvetica, Arial, sans-serif;
+    font-weight: 400;
+    line-height: 1.4em;
+    background: #efefef;
+    padding: 0;
+    margin: 0;
+
+    ul {
+        li.no_disc {
+            list-style: none;
+        }
+    }
+}
+
+header {
+    border-bottom: 1px solid black;
+    background: #333;
+    color: #fff;
+    width: 100%;
+    padding: 5px 0 5px 20px;
+    margin: 0 0 10px 0;
+    h1{
+        font-family: 'Rambla', sans-serif;
+        font-size: 14pt;
+        margin: 0;
+    }
+
+    .links {
+        display: inline-block;
+        margin: 0 0 0 30px;
+    }
+
+    a {
+        color: #fff;
+        text-decoration: none;
+        border: none;
+    }
+}
+
+article {
+    padding: 10px;
+    margin: 0 auto;
+    width: 700px;
+    display: block;
+    h1 {
+        font-family: 'Rambla', sans-serif;
+        font-weight: 700;
+        padding: 2px;
+        margin: 0;
+    }
+
+    h5 {
+        margin: 0;
+        font-weight: normal;
+    }
+
+    pre {
+        code {
+            width: 100%;
+            padding: 12px 15px 15px 15px;
+            overflow: auto;
+        }
+    }
+
+    code {
+        display: inline-block;
+        background: #ddd;
+        padding: 3px 5px 3px 5px;
+        border-radius: 3px;
+        font-size: 10pt;
+        line-height: 1.25em;
+        font-family: 'Source Code Pro', sans-serif;
+    }
+
+    nav {
+        text-align: center;
+        background: #333;
+        color: #fff;
+        width: 700px;
+        margin: 0 auto;
+        padding: 5px 0 5px 0;
+
+        span.prev {
+            text-align: left;
+        }
+
+        span.next {
+            text-align: right;
+        }
+    }
+}
+
+nav#main {
+    right: 40px;
+    width: 200px;
+    border-radius: 5px;
+    border: 1px solid black;
+    background: #AAA;
+    padding: 10px;
+    position: fixed;
+
+    h1 {
+        margin: 0 0 10px 0;
+        padding: 0;
+        font-family: "Rambla", sans-serif;
+        font-size: 14pt
+    }
+
+    ul {
+        margin: 0;
+        padding: 0 0 0 10px;
+        li {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+    }
+
+}
+
+.inline {
+    display: inline-block;
+}
+
+
+a {
+    color: #000;
+    text-decoration: none;
+    border-bottom: 1px dotted #666;
+}
+
+footer {
+    background: #333;
+    color: #fff;
+    width: 100%;
+    padding: 15px;
+    margin-top: 20px;
+    font-size: 10pt;
+
+    a {
+        color: #fff;
+    }
+
+    a img {
+        border: none;
+    }
+}
