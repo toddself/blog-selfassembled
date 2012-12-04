@@ -21,6 +21,7 @@ header {
     width: 100%;
     padding: 5px 0 5px 20px;
     margin: 0 0 10px 0;
+
     h1{
         font-family: 'Rambla', sans-serif;
         font-size: 14pt;
@@ -44,6 +45,7 @@ article {
     margin: 0 auto;
     width: 700px;
     display: block;
+
     h1 {
         font-family: 'Rambla', sans-serif;
         font-weight: 700;
@@ -193,5 +195,43 @@ footer {
 @media screen and (max-width: 1500px){
     nav#main {
         display: none;
+    }
+}
+
+@media screen and (max-width: 640px){
+
+    header {
+        h1 {
+            display: block;
+        }
+    }
+
+    .inline {
+        display: block;
+    }
+
+    body {
+        margin: 0;
+    }
+
+    article {
+        width: 90%;
+        margin: 0 10px 0 10px;
+        padding: 0;
+
+        section {
+            width: 100%;
+        }
+
+        blockquote {
+            float: none;
+            width: 100%;
+            margin: 0;
+        }
+    }
+
+    ul {
+        padding: 0;
+        margin: 0;
     }
 }
