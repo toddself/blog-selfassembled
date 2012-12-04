@@ -1,0 +1,32 @@
+title: Serving a Static Site via S3
+author: Todd Kennedy
+date: 05-12-2012T7:35
+description: The advantages of serving a static site off Amazon's S3
+keywords: amazon, s3, cost, python, cactus
+
+{% extends "post.html" %}
+{% block body %}
+
+{% load markup %}
+{% filter markdown %}
+
+The inspiration to finally launch this site came about in a funny way.  While reading [Hacker News](http://news.ycombinator.com) I came across a post about a new [static website generator](https://github.com/koenbok/Cactus) written in Python. Having played around with Jekyll a few years ago for an unrelated project I was intrigued; one of the "downsides" (and I use that term lightly) of Jekyll is that it's written in Ruby, which, honestly, I'm not that interested in exploring much deeper. (When I decided to learn Python I initially chose it over Ruby because the syntax made more sense to me.)
+
+Cactus, on the other hand, is written in Python, so I can happily roll up my sleeves and muck around with (and most importantly, contribute back to) it, and it's templating system is based on [Django's](http://djangoproject.com) templating language, which was my application framework of choice until I learned about [Flask](http://flask.pocoo.org) last year. (Which, really, warrents it's own discussion around all-inclusive vs minimum viable frameworks.)
+
+The other thing that caught me was the fact that it's designed to use S3 as it's serving/storage mechanism out of the box (thanks to the wonderful [boto](https://github.com/boto/boto) project). I have a VPS host already which runs a [friend's WordPress blog](http://travelshus.com), but I'm really not interested in beefing up that hardware to run TWO wordpress blogs (and dealing with the subsequent traffic), nor did I feel like SCP'ing a bunch of files out to a specific bath and updating indexes, and so on and so on. Already paying for a service though, I was wary of paying MORE to host something entirely not myself.
+
+However taking a look at some data 48 hours after I launched this new blog leads to an interesting conclusion: running a purely static site on Amazon S3 is really, really cheap.
+
+Like, pennies cheap.
+
+- The entire site takes up 88k currently. (Without this post).
+- I've made about 100 PUT request so far (mostly messing around with styling - publish early and publish often!)
+- I have no statistics about viewship (threw Google Analytics on this AM with this post), but assuming a large (for me) 5k page views a month
+
+It will cost around $0.49 to serve all 88K of this site to 5k visitors a month.
+
+That's cheaper than the amount I spend on on shaving supplies for my neckbeard.
+
+{% endfilter %}
+{% endblock %}
