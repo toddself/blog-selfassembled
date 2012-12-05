@@ -1,6 +1,6 @@
 body {
     font-size: 11pt;
-    font-family: Helvetica, Arial, sans-serif;
+    font-family: "Source Sans Pro",  Helvetica, Arial, sans-serif;
     font-weight: 400;
     line-height: 1.4em;
     background: #efefef;
@@ -15,7 +15,6 @@ body {
 }
 
 header {
-    border-bottom: 1px solid black;
     background: #333;
     color: #fff;
     width: 100%;
@@ -42,8 +41,7 @@ header {
 
 article {
     padding: 10px;
-    margin: 0 auto;
-    width: 700px;
+    width: 60%;
     display: block;
 
     h1 {
@@ -74,7 +72,26 @@ article {
         }
     }
 
+    img {
+        display: inline-block;
+        float: right;
+        margin: 10px 0 10px 10px;
+        &:nth-child(2n+1){
+            float: left;
+            margin: 10px 10px 10px 0;
+
+        }
+    }
+
     blockquote {
+        background: #dcdcdc;
+        padding: 5px 10px 5px 10px;
+        border-radius: 5px;
+        font-family: Georgia, 'Times New Roman', serif;
+        line-height: 1.3em;
+    }
+
+    aside {
         background: #ddd;
         padding: 5px 10px 5px 10px;
         margin: 15px 0 15px 15px;
@@ -102,7 +119,7 @@ article {
         text-align: center;
         background: #333;
         color: #fff;
-        width: 700px;
+        width: 100%;
         margin: 0 auto;
         padding: 5px 0 5px 0;
 
@@ -132,13 +149,15 @@ article {
 }
 
 nav#main {
-    right: 40px;
-    width: 300px;
+    top: 75px;
+    right: 0px;
+    width: 21%;
     border-radius: 5px;
     border: 1px solid black;
     background: #AAA;
     padding: 10px;
     position: fixed;
+    margin: 0 15px 0 0;
 
     h1 {
         margin: 0 0 10px 0;
@@ -192,46 +211,20 @@ footer {
     }
 }
 
-@media screen and (max-width: 1500px){
-    nav#main {
-        display: none;
-    }
-}
-
 @media screen and (max-width: 640px){
-
-    header {
-        h1 {
-            display: block;
-        }
-    }
-
-    .inline {
-        display: block;
-    }
-
-    body {
+    nav#main {
+        width: 95%;
         margin: 0;
+        position: static;
     }
 
     article {
-        width: 90%;
-        margin: 0 10px 0 10px;
-        padding: 0;
-
-        section {
-            width: 100%;
-        }
-
-        blockquote {
-            float: none;
-            width: 100%;
-            margin: 0;
-        }
+        width: 95%;
     }
 
-    ul {
-        padding: 0;
-        margin: 0;
+    header {
+        .links {
+            display: block;
+        }
     }
 }

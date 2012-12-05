@@ -22,7 +22,9 @@ The first thing that pops into mind is "oh, I'll just do this in Javascript".
 
 <script src="https://gist.github.com/4072579.js?file=gistfile1.js"></script>
 
-> Bootstrapping data means that anything the server can throw into the page (like information about the current user, or your set of moves, etc) before it gets sent down to the user is one less server round-trip we have to make when the page loads. When you've saved your login information, we set a cookie with some unique ID information for us. Since that cookie gets sent on the initial HTTPS request to our server, the backend sees it and then loads your session (if it's still valid), and places all the objects we'd normally get via an AJAX request into the document body before it sends. Then when the front end runs it's `bootstrap()` routine, it has immediate access to your data.
+<aside>
+Bootstrapping data means that anything the server can throw into the page (like information about the current user, or your set of moves, etc) before it gets sent down to the user is one less server round-trip we have to make when the page loads. When you've saved your login information, we set a cookie with some unique ID information for us. Since that cookie gets sent on the initial HTTPS request to our server, the backend sees it and then loads your session (if it's still valid), and places all the objects we'd normally get via an AJAX request into the document body before it sends. Then when the front end runs it's `bootstrap()` routine, it has immediate access to your data.
+</aside>
 
 That's great! You've loaded your page, whatever method you needed to get the data about the page ran (ideally it was bootstrapped into the page on load), and then you added it to the generic document that came down from the server.
 

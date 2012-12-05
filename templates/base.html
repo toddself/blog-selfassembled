@@ -3,12 +3,12 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-	<meta name="viewport" content="width=device-width">
+	<meta name="viewport" content="width=480">
     <link rel="stylesheet" href="{{ STATIC_URL }}/css/highlight.css">
 	<link rel="shortcut icon" href="{{ STATIC_URL }}/favicon.ico">
 	<link rel="stylesheet" href="{{ STATIC_URL }}/css/style.css">
     <link href="{{ ROOT_URL }}/rss_2.0.xml" rel="alternate" type="application/rss+xml" />
-    <link href='http://fonts.googleapis.com/css?family=Rambla:700|Source+Code+Pro' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Rambla:700|Source+Code+Pro|Source+Sans+Pro' rel='stylesheet' type='text/css'>
     <!--[if lt IE 9]>
         <script src="{{ STATIC_URL }}/js/html5shiv.js"></script>
     <![endif]-->
@@ -25,13 +25,19 @@
 	{% endblock %}
 
 </head>
-<body>
+<body class="man pan">
     <header>
-        <h1 class="inline">&gt; <a href="/">blog.selfassembled.org</a></h1>
+        <h1 class="man inline">&gt; <a href="/">blog.selfassembled.org</a></h1>
         <span class="links">&#187; <a href="{{ ROOT_URL }}/about.html">about</a></span>
         <span class="links">&#187; <a href="https://github.com/toddself">github</a></span>
         <span class="links">&#187; <a href="https://twitter.com/whale_eat_squid">twitter</a></span>
+        <span class="links">&#187; <a href="https://updater.com/jobs">need a job?</a></span>
     </header>
+
+
+	{% block content %}
+	Main content
+	{% endblock %}
 
     <nav id="main">
         <h1>Recent posts</h1>
@@ -42,10 +48,6 @@
         {% endfor %}
         </ul>
     </nav>
-
-	{% block content %}
-	Main content
-	{% endblock %}
 
     {% block footer %}
     <footer>
