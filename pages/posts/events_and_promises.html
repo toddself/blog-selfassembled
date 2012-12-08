@@ -1,0 +1,67 @@
+title: Using Events and Promises for Asynchronous Development
+author: Todd Kennedy
+date: 06-12-2012T21:30
+description: A design pattern for large browser applications to handle communication and asynchronous development
+keywords: jquery, promises, deferred, events, javascript, backbone, single-paged apps
+
+{% extends "post.html" %}
+{% block body %}
+
+{% load markup %}
+{% filter markdown %}
+
+Two of the biggest challenges I had when I was learning javascript (and, from what I can tell, a lot of people have these similar challenges) was dealing with running code asynchronously and the concept of a closure. And to be fair &#151; I'm certainly no expert on these concepts myself. I'd blame it on the fact that my college degree is in Journalism, but I don't remember the computer science department offering classes in javascript development. (Of course this was back in the stone-ages of the late 90s. And yes, the dinosaurs were really cool.)
+
+Most people's first interaction with asynchronous code is when they're trying to use `XMLHttpRequest` to retrieve data from a remote server to make their page "dynamic." (Yes, I remember when AJAX really did involve [parsing XML documents](https://developer.mozilla.org/en-US/docs/Parsing_and_serializing_XML), and yes, I am very glad that [JSON](http://json.org/) exists.)
+
+If you're anything like me, the first thing you did was something like this (excepting all IE-specific stuff that made you want to drive over to Redmond and stab Bill Gates in the eyesockets):
+
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', 'http://myawesomeapp.com/services/', true);
+    xhr.send(null);
+    if(xhr.status === 200) console.log(xhr.responseText);
+
+And, again, if you're anything like me, you sat around that coffee house in Seattle scratching your head thinking that maybe the WiFi was overloaded, but no you can get to Google still, or maybe that document doesn't exist on the server, but no you just copy and pasted the URL into your browser and that's working just fine, so like, what gives!
+
+So you do a little Googling (and holy christ what I would've given to have had [MDN](http://developer.mozilla.org) back then!) and you come across the fact that the third argument to `XMLHttpRequest.open` sets whether or not the call should be made asynchronously. Praise hosannah! I'll just set that bastard to `false` and I'll be on my merry way.
+
+Only wait. What is this spinning cursor? Why the heck is nothing working! DAMN YOUSE! DAMN YOUSE asynchronous codes!
+
+So you Google some more and you find this "jQuery" thing (although it didn't exist at the time I'm going to retcon it into this story, and certainly jQuery 1.5 didn't exist, but whatever) and see the `getJSON` method.  So you try:
+
+    var awesome_json_doc = $.getJSON('http://awesomewebservices.net/isntalinktwitbook');
+    console.log(awesome_json_doc);
+    > Object {done: function, fail: function, progress: function, state: function, isResolved: function…}
+
+Wait.
+
+Where's my `responseText`? What the heck is `process` and `state`?
+
+Congratulaions: you have just discovered the jQuery `$.Deferred` object, which after jQuery 1.5, is what jQuery returns whenever you call a function that runs asynchronously.
+
+## Welcome to flavor country
+
+So as well all know by now, thanks to experiences like this that asynchronous code requires the use of callback functions &#151; functions that you either attach to a listener which gets fired when the asynchronous code performs an event you'd like to do something with (like `XMLHttpRequest.onreadystatechage`), or you pass in to the function call itself to have the asynchronous code call when it's finished doing its thing (like `$.getJSON()`'s second argument).
+
+
+
+
+
+    var MyView1 = Backbone.View.extend();
+    var MyView2 = Backbone.View.extend();
+
+    var view1 = new MyView1;
+    var view2 = new MyView2;
+
+    $.when(view1.render()).then(function(){
+        $('#view1').html(view1.el);
+    });
+
+    $.when(view2.render()).then(function(){
+        $('#view2').html(view2.el);
+    });
+
+
+
+{% endfilter %}
+{% endblock %}
