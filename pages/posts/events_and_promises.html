@@ -1,7 +1,7 @@
-title: Using Events and Promises for Asynchronous Development
+title: $.Deferred is for lovers
 author: Todd Kennedy
-date: 06-12-2012T21:30
-description: A design pattern for large browser applications to handle communication and asynchronous development
+date: 11-12-2012T17:19
+description: How jQuery's promises implementation help with writing asynchronous code
 keywords: jquery, promises, deferred, events, javascript, backbone, single-paged apps
 
 {% extends "post.html" %}
@@ -10,7 +10,13 @@ keywords: jquery, promises, deferred, events, javascript, backbone, single-paged
 {% load markup %}
 {% filter markdown %}
 
-Two of the biggest challenges I had when I was learning javascript (and, from what I can tell, a lot of people have these similar challenges) was dealing with running code asynchronously and the concept of a closure. And to be fair &#151; I'm certainly no expert on these concepts myself. I'd blame it on the fact that my college degree is in Journalism, but I don't remember the computer science department offering classes in javascript development. (Of course this was back in the stone-ages of the late 90s. And yes, the dinosaurs were really cool.)
+Two of the biggest challenges I had when I was learning JavaScript (and, from what I can tell, a lot of people have these similar challenges) was dealing with running code asynchronously and the concept of a closure. And to be fair &#151; I'm certainly no expert on these concepts myself. I'd blame it on the fact that my college degree is in Journalism, but I don't remember the computer science department offering classes in JavaScript development. (Of course this was back in the stone-ages of the late 90s. And yes, the dinosaurs were really cool.)
+
+We're finding this in our interviews as well. (Have I mentioned that [we're hiring](https://updater.com/jobs)?) The number of candidates we've had that are unable to answer basic questions like "what is a closure" and "why does jQuery return deferred objects for asynchronous methods and why is it a good thing?" That last one I realize might not be a basic question, but if you're giving yourself a 7 out of 10 on JavaScript and have jQuery listed as something you know, you should at least have a concept of how to answer that question. (And this isn't even getting into having people write code in an interview, this is just the light-weight q&amp;a first!)
+
+But still, no amount of fancy book learnin' will really help you when it comes to actually writing code that has to deal with real-world scenarios. Today I'm going to talk about how I learned how to stop worrying and love asynchronous programming. Closures? I'll handle at a later date.
+
+## Asynchronous for the win
 
 Most people's first interaction with asynchronous code is when they're trying to use `XMLHttpRequest` to retrieve data from a remote server to make their page "dynamic." (Yes, I remember when AJAX really did involve [parsing XML documents](https://developer.mozilla.org/en-US/docs/Parsing_and_serializing_XML), and yes, I am very glad that [JSON](http://json.org/) exists.)
 
@@ -29,39 +35,77 @@ Only wait. What is this spinning cursor? Why the heck is nothing working! DAMN Y
 
 So you Google some more and you find this "jQuery" thing (although it didn't exist at the time I'm going to retcon it into this story, and certainly jQuery 1.5 didn't exist, but whatever) and see the `getJSON` method.  So you try:
 
-    var awesome_json_doc = $.getJSON('http://awesomewebservices.net/isntalinktwitbook');
+    var awesome_json_doc = $.getJSON('http://awesomewebservices.net/isntalinktwitbook', function(data){ console.log(data); });
     console.log(awesome_json_doc);
     > Object {done: function, fail: function, progress: function, state: function, isResolved: function…}
 
 Wait.
 
-Where's my `responseText`? What the heck is `process` and `state`?
+What the heck is `process` and `state`?
 
-Congratulaions: you have just discovered the jQuery `$.Deferred` object, which after jQuery 1.5, is what jQuery returns whenever you call a function that runs asynchronously.
+Congratulaions: you have just discovered the [jQuery `$.Deferred`](http://api.jquery.com/category/deferred-object/) object, which after jQuery 1.5, is what jQuery returns whenever you call a function that runs asynchronously.
 
-## Welcome to flavor country
+## Make good on your promises
 
-So as well all know by now, thanks to experiences like this that asynchronous code requires the use of callback functions &#151; functions that you either attach to a listener which gets fired when the asynchronous code performs an event you'd like to do something with (like `XMLHttpRequest.onreadystatechage`), or you pass in to the function call itself to have the asynchronous code call when it's finished doing its thing (like `$.getJSON()`'s second argument).
+`$.Deferred` is a massively powerful tool based on the [Promises/A spec](http://wiki.commonjs.org/wiki/Promises/A) (and if you're not using jQuery, there are some alternate implementations: [node-promise](https://github.com/kriszyp/node-promise), [when.js](http://wiki.commonjs.org/wiki/Implementations/when.js)). Where jQuery's implementation really shines is that all asynchronous methods return a deferred object. This makes it very easy to create scenarios where certain functions will fire only when various asynchronous operations have completed. And, even if the state of the deferred object has been "decided" (resolved or rejected), adding additional callbacks to object will cause them to execute for that given state.
 
-``
+This might sound a little complex, so lets dive into some real-world usage examples.
 
+On [Updater](https://updater.com) I've mentioned that we use [DustJS](https://github.com/linkedin/dustjs) for our template rendering. Dust is a great templating language (I happen to like it), but unlike [mustache](https://github.com/janl/mustache.js) or [hogan.js](https://github.com/twitter/hogan.js), it's render method runs asnychronously.
 
+    var compiled_template = dust.compile("I run asynchronously!", "async_example");
+    dust.loadSource(compiled_template); //register our template with dust
+    var template = dust.render("async_example", {}, function(err, out){ console.log(out); });
+    typeof template
+    "undefined"
+    "I run asynchronously!"
 
-    var MyView1 = Backbone.View.extend();
-    var MyView2 = Backbone.View.extend();
+As you can see the result of the call to `dust.render` is `undefined` (in fact you wouldn't actually do that `var template = ` thing in the real world), but later on, when the template is fully compiled and rendered, dust invokes the callback provided as the last parameter which prints the template out to the console.
 
-    var view1 = new MyView1;
-    var view2 = new MyView2;
+Given that we have no control over when the template is rendered (although if you're interested, the [JavaScript execution context](http://davidshariff.com/blog/what-is-the-execution-context-in-JavaScript/) is pretty fascintating), we have no control when our callback will occur. So, if we need something in the DOM to exist we're in a bit of a bind; lets say we wanted to make an input field into a date input using some jQuery date plugin:
 
-    $.when(view1.render()).then(function(){
-        $('#view1').html(view1.el);
+    var compiled_template = dust.compile('<input type="text" value="" id="test_field">','my_form');
+    dust.loadSource(compiled_template); //register our template with dust
+    dust.render("my_form", {}, function(err, out){ $('form').append(out); });
+    $('#test_field').dateInput();
+
+Since the DOM might or might not have the rendered template available in it when we try to access it using a jQuery selector, we can't guarantee that this code will work; sometimes you'll get a date input and sometimes you won't. (And don't tell me to use `type='date'` until the number of visitors using IE8 &amp; IE9 drops below 1%.) So how do we do this?
+
+Promises to the rescue!
+
+    var template_deferred = $.Deferred();
+    template_deferred.done(function(){ $('#test_field').dateInput(); });
+    var compiled_template = dust.compile('<input type="text" value="" id="test_field">','my_form');
+    dust.loadSource(compiled_template); //register our template with dust
+    dust.render("my_form", {}, function(err, out){ $('form').append(out); template_deferred.resolve(); });
+
+We've done three new things here:
+
+1. Created a new `$.Deferred` object and assigned it to `template_deferred`
+1. Attached a callback to the `done` method of the newly created deferred object
+1. Resolved the deferred object when we rendered the template, errors be damned!
+
+When we did `template_deferred.resolve()` we told jQuery that anything attached to the `done` and `always` methods of the deferred object were ready to be called, so it calls all the available callbacks in the order to which they were attached. But we still have no error handling here.  We could easily add an `if` statement in the `dust.render` callback and call `template_deferred.reject`. This would fire all the callbacks attached to both the `fail` and `always` method.
+
+(There's one more event method available on the `$.Deferred` object: `progress`. `progress` callbacks are fired when the deferred object has it's `notify` method called. There's also a version of `notify`, `resolve` and `reject` called `notifyWith`, `resolveWith` and `rejectWith` that allow you to pass a context for the callback, but I'll cover those at a later date.)
+
+<img src="http://rasica.files.wordpress.com/2010/10/but-wait-theres-more-billy-mays-tshirt.jpg" style="display: block; margin: 0 auto; float: none !important">
+
+## `$.when` and `.then`
+
+So now we've got all these awesome deferred objects. But what if we need to wait until more than one promise? jQuery has us covered on that matter too: `$.when` and `.then`. This allows us to treat deferred objects like booleans:
+
+    $.when(dfd_one, dfd_two).then(function(){
+        console.log('both deferreds were resolved!');
     });
 
-    $.when(view2.render()).then(function(){
-        $('#view2').html(view2.el);
+Or a personal favorite of mine (which we use when we're rendering a collection of Backbone models since we don't want to attach them to the DOM until they're all rendered for speed purposes):
+
+    $.when.apply($, _.pluck(array_of_views, 'dfds')).then(function(){
+        $('body').append(_.pluck(array_of_views, 'el'));
     });
 
-
+And yes, there's some advanced usage on there -- `_.pluck` and `apply` are great! We store the deferred object for the template rendering as `dfd` on each view, and Backbone's convention is to put the rendered element in `el`. And `apply` (along with `call`) are nice ways to call methods providing a context.
 
 {% endfilter %}
 {% endblock %}

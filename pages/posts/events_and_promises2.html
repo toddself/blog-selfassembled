@@ -1,0 +1,22 @@
+
+## Welcome to flavor country
+
+So as well all know by now, thanks to experiences like this that asynchronous code requires the use of callback functions &#151; functions that you either attach to a listener which gets fired when the asynchronous code performs an event you'd like to do something with (like `XMLHttpRequest.onreadystatechage`), or you pass in to the function call itself to have the asynchronous code call when it's finished doing its thing (like `$.getJSON()`'s second argument).
+
+And with callback functions we have to talk about scope, since this is alos
+
+
+    var MyView1 = Backbone.View.extend();
+    var MyView2 = Backbone.View.extend();
+
+    var view1 = new MyView1;
+    var view2 = new MyView2;
+
+    $.when(view1.render()).then(function(){
+        $('#view1').html(view1.el);
+    });
+
+    $.when(view2.render()).then(function(){
+        $('#view2').html(view2.el);
+    });
+
