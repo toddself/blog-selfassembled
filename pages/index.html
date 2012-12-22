@@ -4,7 +4,7 @@
     {% for post in posts %}
     <li class="no_disc">
         <article>
-            <h1 class="inline"><a href="{{ ROOT_URL }}/{{ post.path }}">{{ post.title }}</a></h1>
+            <h1 class="inline"><a href="/{{ post.path }}">{{ post.title }}</a></h1>
             <h5 class="inline"><time pubdate="pubdate">{{ post.date|date:"F j, Y g:i a" }}</time></h5>
             <br style="clear: both;">
             <section class="post">
