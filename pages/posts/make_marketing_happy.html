@@ -12,7 +12,12 @@ keywords: backbone, lift, scala, javascript, dustjs, node, express, restify
 
 In [one of my previous posts](/posts/lift_to_backbone.html) I mentioned that we are using Dust to render our HTML templates for the site.  That's only a half-truth.  One of the biggest issues that people encounter with JavaScript webapps is that it's very easy to write an HTML page that comes back from the server that looks like this:
 
-<script src="https://gist.github.com/4072576.js?file=gistfile1.html"></script>
+    <!DOCTYPE html>
+    <html>
+        <meta charset="utf-8">
+        <title>I'm a webapp!</title>
+        <body>
+            <script src="/js/my_awesome_app.js"></script>
 
 (And yes Virgina, that is a valid HTML5 document.  [Don't believe me?](http://validator.w3.org/check?uri=http%3A%2F%2Fselfassembled.org%2Fhtml5test.html&amp;charset=%28detect+automatically%29&amp;doctype=Inline&amp;group=0))
 
@@ -20,7 +25,12 @@ The problem with this, as your marketing/seo/social networking teams (you have t
 
 The first thing that pops into mind is "oh, I'll just do this in Javascript".
 
-<script src="https://gist.github.com/4072579.js?file=gistfile1.js"></script>
+    $(document).ready(function(){
+        // get info about this page somehow
+        // this is, by the way, a dumb way to do this
+        $('head').append($(document.createElement('og:description'))
+                 .html('This page kicks some major butt'));
+    });
 
 <aside>
 Bootstrapping data means that anything the server can throw into the page (like information about the current user, or your set of moves, etc) before it gets sent down to the user is one less server round-trip we have to make when the page loads. When you've saved your login information, we set a cookie with some unique ID information for us. Since that cookie gets sent on the initial HTTPS request to our server, the backend sees it and then loads your session (if it's still valid), and places all the objects we'd normally get via an AJAX request into the document body before it sends. Then when the front end runs it's `bootstrap()` routine, it has immediate access to your data.
@@ -48,7 +58,24 @@ This means that you should be rendering ALL of your HTML before you send it down
 
 This means we shouldn't just be sending this:
 
-<script src="https://gist.github.com/4198793.js"> </script>
+    <div id="header"></div>
+    <div class="background vert_spacer">
+        <div id="main">
+            <div id="nav"></div>
+            <div id="workflow">
+                <lift:bind name="page_title"><h1 id="page_title"></h1></lift:bind>
+                <div id="flash_message"></div>
+                <div id="verify_message"></div>
+                <div id="user_data"></div>
+                <div id="section"></div>
+                <div id="verification_section"></div>
+                <div id="authentication"></div>
+            </div>
+        </div>
+        <br class="clear" />
+    </div>
+    <div id="footer"></div>
+
 
 ### With Great Power Comes Hard Work
 

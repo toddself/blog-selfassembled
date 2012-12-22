@@ -30,6 +30,7 @@ For our new site launch I decided to go with Backbone for a number of reasons.
 
 The downside to using a library vs using a framework is that you will end up writing a lot more boilerplate code than you would had you decided to go with another codebase. The default `render` method for Backbone does nothing, leaving the templating, DOM manipulation, etc up to you to define. So instead of inheriting some sort of default rendering method you have to deal with, you can write your own. This allows us more flexibility in templating engines &#151; if the render method cannot be run asynchronously, you'll need to jump through a lot more hoops to use something like [Dust](https://github.com/linkedin/dustjs). This can be easily recitified however by defining your own base view class and extending from that.
 
+### base_view.js
 <script src="https://gist.github.com/4194920.js"> </script>
 
 (I'll go more into depth about this chunk of code later.)

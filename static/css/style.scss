@@ -57,6 +57,23 @@ article {
         padding: 2px;
     }
 
+    h3 {
+        margin-bottom: 0;
+        display: inline-block;
+    }
+
+    img {
+        width: 100%;
+    }
+
+    .expand_gist {
+        margin: 0 0 0 10px;
+        cursor: pointer;
+        font-size: 10pt;
+        font-style: italic;
+        color: rgb(0, 153, 153);
+    }
+
     h5 {
         margin: 0;
         font-weight: normal;
