@@ -80,7 +80,6 @@
             $('.gist').each(function(){
                 var $e = $(this);
                 var $header = $e.prev().prev();
-                $e.hide();
                 if($header.prop('tagName') === 'H3'){
                     var gist_id = $e.attr('id');
                     var $toggle = $('<span>').attr('id', gist_id)
