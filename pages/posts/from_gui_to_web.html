@@ -1,6 +1,6 @@
-title: From a desktop GUI to Javascript
+title: From a desktop GUI to a Javascript-powered webapp
 author: Todd Kennedy
-date: 22-12-2012T17:19
+date: 22-12-2012T12:36
 description: The path a program takes from wxWidgets to pure Python to a hybrid app
 keywords: flask, python, brewing, wxwidgets, wxpython, sqlobject, django
 
@@ -44,6 +44,7 @@ Henceforth instead of calling the project BeerMaker it changed to b(eer)log; and
 After few attempts at creating a web interface to the project I realized that creating a recipe is an interactive type thing &#151; as you enter values into the form, fields need to be constantly recalculated to show what effects adding 1.5lbs of Maris Otter will have on your color, available sugars and potential amount of alcohol by volume.
 
 ![an early attempt](/static/img/beerlog.png)
+*I am not a designer*
 
 So out went all my Python beer math stuff, and in comes JavaScript and my third attempt at trying to finish up this piece of software.  The backend API is nearly complete (and still built on top of those original SQLObject models from three years ago (albeit heavily modified)), complete with view annotations (so you can explain what class of user is able to read/write which attribute on the given object) and a system for generating JSON-able Python `dict` objects directly from the SQLObject represtation, including both the generated and static attributes for the model.
 
