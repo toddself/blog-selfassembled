@@ -8,8 +8,8 @@
     {% for post in posts %}
     <item>
       <title>{{ post.title }}</title>
-      <link>http://blog.selfassembled.org{{ post.path }}</link>
-      <description>{{ post.body|striptags|truncatewords:200 }}</description>
+      <link>http://blog.selfassembled.org/{{ post.path }}</link>
+      <description>{{ post.body|removetags:"img" }}</description>
       <pubDate>{{ post.date|date:"c" }}</pubDate>
     </item>
     {% endfor %}
