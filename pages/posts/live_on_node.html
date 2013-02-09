@@ -1,0 +1,51 @@
+title: Switching to Node.js
+author: Todd Kennedy
+date: 09-02-2013T14:35
+description: Wherein we fully separated out our HTML-based web client from our Scala/Lift back-end
+keywords: node.js, express, consolidate, dustjs, javascript, scala, lift, nginx
+
+{% extends "post.html" %}
+{% block body %}
+
+{% load markup %}
+{% filter markdown %}
+
+In the past I've alluded to troubles/concerns we've had with using the [Lift framework](http://liftweb.net) to server as our delivery mechanism for our web-browser client application &#151; nothing from a technical nature (other than it's soft-of Byzantine desire to control the HTML experience from the backend), but it just hasn't lead us to the sorts of rapid development experience we need for what we're doing.
+
+After we re-launched the site as a Backbone application in the Fall, our attentions swung to the backend to see what we could do to better seperate our client application from our business API, but more importantly, prevent as much Lift and Scala from dealing with HTML as possible.
+
+I sat down and came up with a list of things that our new system would require:
+
+1. Ability to parse our client-side templates so we can assemble the HTML for the page and reduce our post-load DOM manipulation.
+1. Capacity to make REST requests against the API back-end to slipstream data into the HTML response before its sent to the client.
+1. Have an active ecosystem of available packages to reduce the amount of time we spent writing code.
+1. Written in a language known by at least two of our staff.
+1. Not have a horribly complicated setup for serving behind Nginx
+1. Not be overkill. We have no need for an ORM or database connectivity, so that should be, at the most, an optional component, and we already have a templating language (see #1), so that shouldn't be required either.
+1. Allow for the rapid devleopment and deployment of semi-static content (where the content of the page is text, but it's served from with in the app container to maintain header functionality).
+
+With this set of core requirements, we started looking at what systems and languages would meet these needs. The REST API and active ecosystem requirements were pretty much met by any nameable-off-the-top-of-our-heads system: Node (Express, Gedddy), Python (Flask, web.py), Ruby (Sinatra, Rails), Java/JVM (Groovy/Grails, Spring)... really the list never ends so if I missed your favorite combination, my apologies.
+
+Ruby was the first go due to lack of in-house expertise. (Yes. We are a start-up. And no, we have no actual Ruby developers in house. How odd!)
+
+I quickly pulled Java out of it since we already were running a servlet via Tomcat on the machines and didn't want to mess with deploying two of them simultaniously (and Java is, well, just so boring!)
+
+This left Python (a personal favorite of mine) and JavaScript. Being that dust.js is only usable from within JavaScript made it a forced decision to go with Node (using Express since it was so much lighter weight than anything else).
+
+I started writing the core of the server the day after Christmas while hiding from my in-laws (all of whom are lovely, but numerous) and we launched it six weeks later assuming the serving of all of our HTML (and static content). In that time we:
+
+1. Built a multi-site configuration system that allows the server to load configuration files (and therefore switch the look, feel &amp; operation) of our site depending on the URL. (This is for partner who white label our client)
+1. Built a REST client (on top of [restify](http://mcavage.github.com/node-restify/)) to grab data from the API to slipstream into the page before returning it to the user
+1. Designed a very-light weight URL routing system allowing for the deployment of new static pages without altering routing logic
+1. Setup our server infrastructure to have NGINX proxy just API requests to the Tomcat servlet, and all other requests to the node server
+1. Wrote a script to run Node as an [Upstart](http://upstart.ubuntu.com/) service (our AWS machines run Ubuntu)
+1. Re-wrote all of our code in Coffeescript
+1. Setup [grunt.js](http://gruntjs.org) to manage our build environment
+1. Attained a 75% coverage rate for our new code
+
+It's been a busy past six weeks, but it's been totally worth it to get this launched.
+
+I'm going to start dissecting the choices we made in depth in a series of posts here over the next couple of weeks starting with the end first (as all stories should be) &#151; getting node.js setup to run as a reliable daemon process under unix.
+
+{% endfilter %}
+{% endblock %}
