@@ -62,10 +62,6 @@ article {
         display: inline-block;
     }
 
-    img {
-        width: 100%;
-    }
-
     .gist {
         display: none;
     }
@@ -84,6 +80,7 @@ article {
     }
 
     pre {
+        display: block;
         code {
             width: 95%;
             padding: 12px 15px 15px 15px;
@@ -102,6 +99,14 @@ article {
             margin: 10px 10px 10px 0;
 
         }
+    }
+
+    img:after {
+        content: ".";
+        display: block;
+        height: 0;
+        clear: both;
+        visibility: hidden;
     }
 
     blockquote {
@@ -159,7 +164,6 @@ article {
 
     img {
         .center {
-            display: block;
             margin: 0 auto;
         }
         .right {

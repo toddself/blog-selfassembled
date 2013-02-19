@@ -1,0 +1,84 @@
+title: Running Node.js as an Upstart service
+author: Todd Kennedy
+date: 18-02-2013T14:35
+description: Wherein we fully separated out our HTML-based web client from our Scala/Lift back-end
+keywords: node.js, express, consolidate, dustjs, javascript, scala, lift, nginx
+
+{% extends "post.html" %}
+{% block body %}
+
+{% load markup %}
+{% filter markdown %}
+
+*Other posts in this series:*
+
+1. [Switching to Node.js](/posts/live_on_node.html)
+1. [Running Node.js as an Upstart service](/posts/running_node_on_upstart.html)
+
+I'm going to start with the final step first, being that it was the most vexing to solve, thanks to the vagaries of [upstart](http://upstart.ubuntu.com/) configuration files. I know it seems backwards, but really, this was such a pain in the ass, it felt it demanded documentation as quickly as possible.
+
+The node ecosystem, being a relatively young ecosystem, is missing some of the deployment tools that most other development enviroments have had for some time; this is most strikingly obvious when you're looking to deploy your node.js backend out on your live servers. My first question was "what's the equivilent of [WSGI](http://wsgi.readthedocs.org/en/latest/) (or [Rack](http://rack.github.com/) or [Servlets](http://en.wikipedia.org/wiki/Java_Servlet)) for node?" (And yes I know that WSGI is blocking and Node is not, but the details of implementation aren't as important to this question as the existance of such a gateway.)
+
+As far as I can find, the answer is none! You start your service using the command line and your script is responsible for creating a listener on a port. So long as you get traffic to the port on which it's listening &#151; your service is going. You don't to worry about setting up an WSGI server, you don't have to handle any complex deployment scenarios &#151; just get your code out on the server and run the command.
+
+Obviously, then we need to consider the following:
+
+1. How to get node to run like a daemon
+1. How to start/stop the service along with all the other services
+1. How to restart the service automatically when it crashes
+1. How to handle running along side other web services on the same machine
+
+## Daemonizing your processes
+
+![*Sort of like press your luck...*](http://upload.wikimedia.org/wikipedia/en/5/55/Bsd_daemon.jpg)
+
+There are several ways to handle running a program as a non-interactive service. We could write it as a daemon process using `fork`/`spawn` and spawning the necessary processes for our script to daemonize itself or we could use a wrapper program like `start-stop-daemon`.<span id="return_note_1">[<sup>*</sup>](#note_1)</span>
+
+Using [`child_process.spawn`](http://nodejs.org/api/child_process.html#child_process_child_process_spawn_command_args_options) we could write our server specifically to spawn child processes. This, for some reason, feels messy &#151; I'm trying to write a web-application, not a daemon, and would prefer to keep my code as clean as possible towards that singular purpose. I also don't really like writing daemons. I'd rather do:
+
+    import time, sys
+
+    try:
+        respond_to_some_event_when_it_happens()
+        while True:
+            time.sleep(86400)
+    except KeyboardInterrupt:
+        sys.exit(0)
+
+Then be forced to handle daemonizing a process &#151; I mean seriously, what has that cute little devil done to you! Ergo, I decided on `start-stop-daemon` which has a unix-appropriate-length man page for it, but more importantly, is designed to handle this exact scenario.
+
+I figured the next two would be easy to tackle: since we're using Ubuntu linux on our AWS machines we will use Upstart, the system process management system that replaces the SYS V style init system with something a little more managed (similar to `launchctl` on <span style="text-decoration: line-through">NeXT</span>MacOS).
+
+Upstart has a vexing problem however: it's documentation, while volumnous for an open-source project kind of blows. The cookbook has no real recipies in it, and it's biggest problem: there's no way to validate the syntax of you upstart script. Either it runs or it doesn't. If it doesn't &#151; good luck on figuring it out.
+
+Some furious Googling later left me with the following upstart script:
+
+    # updater_node
+    #
+
+    description     "Updater node.js front end"
+    author          "Todd Kennedy"
+
+    start on runlevel [2345]
+
+    stop on runlevel [06]
+
+    respawn
+
+    # What environment are we in
+    env NODE_ENV=<%= node.chef_environment %>
+    env NODE_HOME=/var/opt/node
+
+    chdir $NODE_HOME/app
+
+    # Start the process
+    exec start-stop-daemon --start --chuid ubuntu --make-pidfile --pidfile $NODE_HOME/run/node-upstart.pid --exec /usr/local/bin/node -- $NODE_HOME/app/server.js >> $NODE_HOME/log/node-upstart.log 2>&1
+
+(As you can see we are using [chef](http://opscode.com) to manage our deployments -- this just prints out the name of the appropriate environment: development, testing, production, so that our app can configure itself appropriately).
+
+This gets placed into `/etc/init/node.conf` and can be run with the standard `stop`, `start`, `restart`, `status`, etc commands. But how do you know if you've gotten the syntax right? It will tab-complete when you try to interact with it: `start no➥` should print out 'node'. If it doesn't you've, got some digging to do!
+
+<span id="note_1"><sup>*</sup></span> I understand there are million and one ways to do this on unix, these are the two options I considered for this purpose however. [↩](#return_note_1)
+
+{% endfilter %}
+{% endblock %}
