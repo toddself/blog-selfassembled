@@ -1,0 +1,132 @@
+title: Don't Repeat Yourself - Share With Yourself!
+author: Todd Kennedy
+date: 02-08-2013T10:03
+description: A simple method to share models between the front and backend
+keywords: node, backbone, mongo, javascript, models, sharing, dry, don't repeat yourself
+
+{% extends "post.html" %}
+{% block body %}
+
+{% load markup %}
+{% filter markdown %}
+
+There's a common adage/philosophy in software development in general: don't repeat yourself. The idea is that if you're copying and pasting code between sections or re-writing code that looks incredibly similar to other code you've got, you should be refactoring those sections of code so that if you need to change the logic for one of them, you'll change it once and not have to bother finding all instances.
+
+![Root of all evil? Eh...](/static/img/dont_repeat.jpg)
+<br style="clear: both;">
+
+The first instance I had of this (and this will probably date me) will learn this is when my CS teacher in High School showed me how to declare a constant in Pascal. (Yes. I said this would probably date me.)
+
+    Const
+        Pi = 3.14;
+        CircleDegrees = 360;
+
+For you whippersnappers in C you get:
+
+    #define PI 3.14;
+
+or
+
+    float const PI = 3.14;
+
+And you youngin's that use Java might even do:
+
+    public static final float PI = 3.14;
+
+But then you'd have to get off my lawn and quiet down. (Also, seriously, `public`, `static` AND `final`?!)
+
+![I'm not this old...](/static/img/get-off-my-lawn.jpg)
+
+"OK Grandpa, why are you telling us about punchcards, the Hollerith Tabulating Machine, the Jaquard Loom and your battles with the luddites?"
+
+"That reminds of the time that I killed the Kaiser and prevented World War I...wait...no programming."
+
+So the above examples are pretty reductive, no? Defining constants so you can make sure that `PI` is the same wherever you use it (and yes, I know about `#include <math.h>` and `import java.lang.Math` &#151; like I said, it was reductive.) So where I am going with this?
+
+To co-opt [Atwood's Law](http://www.codinghorror.com/blog/2007/07/the-principle-of-least-power.html) all developer blogs eventually lead to Javascript.
+
+Having just finished a lovely two days at [Backbone Conf](http://backboneconf.com) I figured this was an appropriate post to make. Recently we've been working on some project sthat are powered by JS on both the backend (thanks Node.js) and the front-end, and we want to share code between them, since, well, have you been reading this so far?
+
+But first a brief digression....
+
+When I first started using Backbone I was doing all of backend work in Python. Since the backend had the connection to the database, I'd define my model in the ORM I was using, usually [SQLObject](http://sqlobject.org).But then I'd have to write a similar model for the front end and then endeavor to keep them in sync as the project would go under envitable redesigns, especially during prototyping and early development.
+
+Mostly because this:
+
+    class Post(SQLObject):
+        body = UnicodeCol()
+        author = ForeignKey('users')
+        posted_on = DateTimeCol(default=datetime.datetime.now)
+        created_on = DateTimeCol(default=datetime.datetime.now)
+        tags = RelatedJoin('tag')
+
+is a pain in the ass to maintain along with this:
+
+    var Post = Backbone.Model.extend({
+        defaults: {
+            body: "",
+            author: 0,
+            posted_on: (new Date).toString,
+            created_on: (new Date).toString,
+            tags: []
+        }
+    });
+
+And then you get the point of creating validators, and trying to maintain validation logic between both domains, and it's enough to make you want to stop programming.
+
+Thankfully, having been a JavaScript developer for the past too many years (and ergo, not being scared of JavaScript), you say "oh I'll just write my backend in JavaScript and share code between the two!" And since Backbone is such a small library, we'll use the model system to demonstrate how this works since there will be much less to worry about.
+
+And since Backbone's model system is really based around the concept of documents, we're going to use mongodb for our data persistance layer. The easiest way to make this all work is to just override Backbone.Sync (which is specifically designed for this.)
+
+The method signature for Backbone.Sync is simple:
+
+    Backbone.Sync = function(method, model, options)
+
+Where `method` maps to HTTP verbs:
+
+* `create` = `POST`
+* `update` = `PUT`
+* `patch` = `PATCH`
+* `delete` = `DELETE`
+* `read` = `GET`
+
+`model` is the model you're operating on, and `options` is a hash of options for the sync method (which we'll ignore for now since we don't need it on the backend for this simple implementation).
+
+So we'll start by writing a quick case statement inside our new Sync:
+
+    module.exports = function(method, model, options){
+        switch(method){
+            case 'create':
+                break;
+            case 'update':
+            case 'patch':
+                break;
+            case 'delete':
+                break;
+            case 'read':
+                break;
+            default:
+                break;
+        }
+    };
+
+We're going to make `update` and `patch` the same since mongodb will handle "upserting" just changed data for us if that's the case with the model.
+
+Now that we've got a basic skeleton for this, we need to also provide some interface for talking to mongo as well.  We're going to use the very lightweight wrapper [mongojs](https://github.com/gett/mongojs) which will abstract *some* of the nastiness of the native mongodb wrapper from us, so lets add that
+
+    var mongojs = require('mongojs');
+    module.exports = function(method, model, options){
+        // nothing has changed in here yet
+    }
+
+The native Backbone.Sync method nomially returns a [jQuery `$.Deferred()`](/posts/events_and_promises.html) (unless you're using zepto or ender or something else as your `$.ajax` interface) object the since mongodb works (like a lot of JavaScript) asynchronously, we're going to mimic that interface and return a `then`-able object from our sync method.
+
+But then you've still got to figure out how to make the model do different things depending on the context: when you are on the client you want your `save` method to send data via an ajax call to the backend, but on the backend you want the `save` method to be able to actually write the data to your data persistance layer.
+
+But first
+
+
+
+
+{% endfilter %}
+{% endblock %}
