@@ -1,6 +1,6 @@
 title: Don't Repeat Yourself - Share With Yourself!
 author: Todd Kennedy
-date: 02-08-2013T10:03
+date: 03-08-2013T08:03
 description: A simple method to share models between the front and backend
 keywords: node, backbone, mongo, javascript, models, sharing, dry, don't repeat yourself
 
@@ -39,15 +39,16 @@ But then you'd have to get off my lawn and quiet down. (Also, seriously, `public
 
 "OK Grandpa, why are you telling us about punchcards, the Hollerith Tabulating Machine, the Jaquard Loom and your battles with the luddites?"
 
-"That reminds of the time that I killed the Kaiser and prevented World War I...wait...no programming."
+"That reminds of the time that I killed the Kaiser and prevented World War I...wait...no...back to programming."
 
 So the above examples are pretty reductive, no? Defining constants so you can make sure that `PI` is the same wherever you use it (and yes, I know about `#include <math.h>` and `import java.lang.Math` &#151; like I said, it was reductive.) So where I am going with this?
 
-To co-opt [Atwood's Law](http://www.codinghorror.com/blog/2007/07/the-principle-of-least-power.html) all developer blogs eventually lead to Javascript.
+To co-opt [Atwood's Law](http://www.codinghorror.com/blog/2007/07/the-principle-of-least-power.html): all developer blogs eventually lead to Javascript.
 
-Having just finished a lovely two days at [Backbone Conf](http://backboneconf.com) I figured this was an appropriate post to make. Recently we've been working on some project sthat are powered by JS on both the backend (thanks Node.js) and the front-end, and we want to share code between them, since, well, have you been reading this so far?
+Having just finished a lovely two days at [Backbone Conf](http://backboneconf.com) I figured this was an appropriate post to make. Recently we've been working on some projects that are powered by JS on both the backend (thanks Node.js) and the front-end, and we want to share code between them, since, well, have you been reading this so far?
 
-But first a brief digression....
+![But first a brief digression](/static/img/and_now_its_time_for_something_completely_different.jpg)
+<br style="clear: both;">
 
 When I first started using Backbone I was doing all of backend work in Python. Since the backend had the connection to the database, I'd define my model in the ORM I was using, usually [SQLObject](http://sqlobject.org).But then I'd have to write a similar model for the front end and then endeavor to keep them in sync as the project would go under envitable redesigns, especially during prototyping and early development.
 
@@ -66,8 +67,8 @@ is a pain in the ass to maintain along with this:
         defaults: {
             body: "",
             author: 0,
-            posted_on: (new Date).toString,
-            created_on: (new Date).toString,
+            posted_on: (new Date).toString(),
+            created_on: (new Date).toString(),
             tags: []
         }
     });
@@ -76,7 +77,7 @@ And then you get the point of creating validators, and trying to maintain valida
 
 Thankfully, having been a JavaScript developer for the past too many years (and ergo, not being scared of JavaScript), you say "oh I'll just write my backend in JavaScript and share code between the two!" And since Backbone is such a small library, we'll use the model system to demonstrate how this works since there will be much less to worry about.
 
-And since Backbone's model system is really based around the concept of documents, we're going to use mongodb for our data persistance layer. The easiest way to make this all work is to just override Backbone.Sync (which is specifically designed for this.)
+Backbone's model system is really based around the concept of documents, so we're going to use mongoDB for our data persistance layer. The easiest way to make this all work is to just override Backbone.Sync (which is specifically designed for this.)
 
 The method signature for Backbone.Sync is simple:
 
@@ -110,22 +111,88 @@ So we'll start by writing a quick case statement inside our new Sync:
         }
     };
 
-We're going to make `update` and `patch` the same since mongodb will handle "upserting" just changed data for us if that's the case with the model.
+We're going to make `update` and `patch` the same since mongoDB will handle "upserting" just changed data for us if that's the case with the model.
 
-Now that we've got a basic skeleton for this, we need to also provide some interface for talking to mongo as well.  We're going to use the very lightweight wrapper [mongojs](https://github.com/gett/mongojs) which will abstract *some* of the nastiness of the native mongodb wrapper from us, so lets add that
+Now that we've got a basic skeleton for this, we need to also provide some interface for talking to mongo as well.  We're going to use the very lightweight wrapper [mongojs](https://github.com/gett/mongojs) which will abstract *some* of the nastiness of the native mongoDB wrapper from us, so lets add that
 
     var mongojs = require('mongojs');
     module.exports = function(method, model, options){
         // nothing has changed in here yet
     }
 
-The native Backbone.Sync method nomially returns a [jQuery `$.Deferred()`](/posts/events_and_promises.html) (unless you're using zepto or ender or something else as your `$.ajax` interface) object the since mongodb works (like a lot of JavaScript) asynchronously, we're going to mimic that interface and return a `then`-able object from our sync method.
+The native Backbone.Sync method nomially returns a [jQuery `$.Deferred()`](/posts/events_and_promises.html) (unless you're using Zepto or something else as your `$.ajax` interface) object, and the since mongoDB works (like a lot of JavaScript) asynchronously, we're going to mimic that interface and return a `then`-able object. So lets add a default callback for the database operations which will resolve the promise and return that promise at the end of the sync method. (Also we call in our express app object here since we're using express in order to get our db config.)
 
-But then you've still got to figure out how to make the model do different things depending on the context: when you are on the client you want your `save` method to send data via an ajax call to the backend, but on the backend you want the `save` method to be able to actually write the data to your data persistance layer.
+    var q = require('q'');
+    var mongojs = require('mongojs');
 
-But first
+    module.exports = function(method, model, options){
+        var d = q.defer();
+        var app = require('../app');
+        var db = mongojs(app.get('db_server'));
+        var collection = db.collection(app.get('db_collection'));
+
+        var  db_callback = function(err, response){
+            if(err){
+                d.reject(err):
+            } else {
+                d.resolve(response);
+            }
+        }
+
+        // nothing else has changed
+
+        return d.promise;
+    }
+
+MongoDB does some obnoxious stuff though that we're going to have to account for in that callback. If you've performed an "upsert" (which is an update to an existing model in place), the driver will actually just return `1` to let you know it was successful. Every other normal operation returns a copy of the data you've just sent. So we need to modify our callback for that operation. In this case the `model` being passed into the `Sync` method already has all the data we need attached to it, so we're just going to return back it's JSON representation once we know the datastore has been updated. And since mongoDB returns an array everytime, we'll resolve with just the first since we're only ever dealing with on model here (this is not collection-aware!)
+
+        var  db_callback = function(err, response){
+            if(err){
+                d.reject(err):
+            } else {
+                if(res === 1){
+                    d.resolve(model.toJSON());
+                } else {
+                    d.resolve(response[0]);
+                }
+            }
+        }
+
+Now lets just wire up our `switch` statement:
+
+    switch(method){
+        case 'create':
+            collection.insert(model.toJSON(), {safe: true}, db_callback);
+            break;
+        case 'update':
+        case 'patch':
+            collection.save(model.toJSON(), db_callback);
+            break;
+        case 'delete':
+            d.reject(new Error('This is left as an exercise to the reader'));
+            break;
+        case 'read':
+            var _id = model.get('_id');
+            var query_params = {};
+            if(_id){
+                query_params._id = mongojs.ObjectID(_id);
+            } else {
+                d.reject(new Error('You must provide an _id to lookup'));
+            }
+            collection.find(query_params, db_callback);
+            break;
+        default:
+            d.reject(new Error('Unimplemented'));
+            break;
+    }
+
+So all together you've now got:
+
+### MongoDB variant of Backbone.Sync
+<script src="https://gist.github.com/toddself/6146209.js"></script>
 
 
+But then you've still got to figure out how to make the model do different things depending on the context: when you are on the client you want your `save` method to send data via an ajax call to the backend, but on the backend you want the `save` method to be able to actually write the data to your data persistance layer. Since this will depend on what method you're using for modules on the front end (and you are using modules on the front end right?), we'll leave this for the next post.
 
 
 {% endfilter %}
