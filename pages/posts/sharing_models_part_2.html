@@ -1,0 +1,88 @@
+title: Context Aware Backbone Models
+author: Todd Kennedy
+date: 04-08-2013T10:03
+description: A simple method to share models between the front and backend
+keywords: node, backbone, mongo, javascript, models, sharing, dry, don't repeat yourself
+
+{% extends "post.html" %}
+{% block body %}
+
+{% load markup %}
+{% filter markdown %}
+
+*Previous post*: [Don't Repeat Yourself - Share With Yourself!](/posts/sharing_models.html)
+
+In my previous post I showed a drop-in Backbone.Sync replacement for saving models to MongoDB.  Obviously this sync method needs to be available when you've instantiated your model on the back end, but shouldn't exist on the front end version of the model.
+
+So how do we selectively override attaching our custom sync method? Honestly that depends on what module system you're using for your code on the front end. I'll show [RequireJS/AMD](http://requirejs.org/) and [Browserify](http://browserify.org/) versions below. If you're using Stitch or something else, you're on your own, but you should have a good start here. (But you should look into Browserify!)
+
+## RequireJS
+
+With RequireJS we're going to need to make it so that the `define` method that RequireJS relies upon is available on the back end (and can pull back in your defined module from the `return` statement), so we'll use the `amdefine` package to handle this. Using the `typeof define` switch also provides a decent hook to determine that we're on the backend.
+
+
+    'use strict';
+
+    var define;
+    var sync;
+
+    if (typeof define !== 'function') {
+        define = require('amdefine')(module);
+        sync = require('mongo_sync');
+    }
+
+    define(function(require){
+        var Backbone = require('backbone');
+
+        if(typeof sync === 'function'){
+            Backbone.Sync = sync;
+        }
+
+        return Backbone.Model.extend({});
+    });
+
+We're not using the existence of the `window` or `process` objects here to determine context &#151; if you're using mocha via phantomJS you'll run into issues here -- both `window` and `process` are available in that context, hence why're using hooking into the type definition of `define`.
+
+Of course you'll need to shim Backbone, Underscore and jQuery in for this to work properly on the front end.
+
+    requirejs.config({
+      paths: {
+        'jquery': 'path/to/jquery',
+        'underscore': 'path/to/underscore',
+        'backbone': 'path/to/backbone',
+      },
+      shim: {
+        'backbone': {
+          deps: ['underscore', 'jquery'],
+          exports: 'Backbone'
+        },
+        'underscore': {
+          exports: '_'
+        },
+      }
+    });
+
+## Browserify
+
+I am a recent convert to the world of browserify for certain contexts (mainly when your entire code base is done in JavaScript), and this makes it even easier:
+
+    'use strict';
+
+    var Backbone = require('backbone');
+
+    if(!process.browser){
+        Backbone.Sync = require('mongo_sync');
+    }
+
+    module.exports = Backbone.Model.extend({});
+
+Since Browserify attaches `browser` to the `process` object when it's running in the browser, it's a simple hook to override the sync method when we're just not in the browser.
+
+Of course this does require setting up Browserify specifically to be able to provide jQuery to Backbone. We'll leave that for another post though. (Tip: check out [Browserify-Shim](https://github.com/thlorenz/browserify-shim))
+
+So there you have it -- a method for sharing the same Backbone models, validation methods on those models, etc between the front and back end, so you can stop repeating yourself and concentrate on writing good code!
+
+*Previous post*: [Don't Repeat Yourself - Share With Yourself!](/posts/sharing_models.html)
+
+{% endfilter %}
+{% endblock %}

@@ -10,6 +10,8 @@ keywords: node, backbone, mongo, javascript, models, sharing, dry, don't repeat 
 {% load markup %}
 {% filter markdown %}
 
+*Next post*: [Context Aware Backbone Models](/posts/sharing_models_part_2.html)
+
 There's a common adage/philosophy in software development in general: don't repeat yourself. The idea is that if you're copying and pasting code between sections or re-writing code that looks incredibly similar to other code you've got, you should be refactoring those sections of code so that if you need to change the logic for one of them, you'll change it once and not have to bother finding all instances.
 
 ![Root of all evil? Eh...](/static/img/dont_repeat.jpg)
@@ -122,7 +124,7 @@ Now that we've got a basic skeleton for this, we need to also provide some inter
 
 The native Backbone.Sync method nomially returns a [jQuery `$.Deferred()`](/posts/events_and_promises.html) (unless you're using Zepto or something else as your `$.ajax` interface) object, and the since mongoDB works (like a lot of JavaScript) asynchronously, we're going to mimic that interface and return a `then`-able object. So lets add a default callback for the database operations which will resolve the promise and return that promise at the end of the sync method. (Also we call in our express app object here since we're using express in order to get our db config.)
 
-    var q = require('q'');
+    var q = require('q');
     var mongojs = require('mongojs');
 
     module.exports = function(method, model, options){
@@ -194,6 +196,7 @@ So all together you've now got:
 
 But then you've still got to figure out how to make the model do different things depending on the context: when you are on the client you want your `save` method to send data via an ajax call to the backend, but on the backend you want the `save` method to be able to actually write the data to your data persistance layer. Since this will depend on what method you're using for modules on the front end (and you are using modules on the front end right?), we'll leave this for the next post.
 
+*Next post*: [Context Aware Backbone Models](/posts/sharing_models_part_2.html)
 
 {% endfilter %}
 {% endblock %}
