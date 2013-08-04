@@ -38,7 +38,7 @@ Bootstrapping data means that anything the server can throw into the page (like 
 
 That's great! You've loaded your page, whatever method you needed to get the data about the page ran (ideally it was bootstrapped into the page on load), and then you added it to the generic document that came down from the server.
 
-### Problem solved? Right?
+#### Problem solved? Right?
 
 Only not.
 
@@ -48,7 +48,7 @@ Anything you want a web robot, crawler or scraper to be able to index you'll nee
 
 Right now, as a stop-gap solution, we're still using Lift to render all the pages that you see when you load our site. This was useful since we didn't need to worry about re-architecting our URL-routing solution, and we could rely on the backend to bootstrap data into the page when it loads and you're logged in.
 
-### Extra credit problems
+#### Extra credit problems
 
 So we've gone through the trouble of bootstrapping all of our user data into the page so we can stop incurring that silly extra HTTP overhead of re-requesting data that we already know we're going to need, but we're still relying on JavaScript to render the entire UI, which we can't do until at least the DOM ready event has been fired.
 
@@ -77,7 +77,7 @@ This means we shouldn't just be sending this:
     <div id="footer"></div>
 
 
-### With Great Power Comes Hard Work
+#### With Great Power Comes Hard Work
 
 So if this so great, why don't we do it yet? Because, well, frankly, it's hard. This means that you need to write your application with the mindset that it *might* not have to render the pages it's responsible for. You have to make it so your client-side templates can also be rendered by your server's page language (which, Dust.JS cannot be, at least by Scala). You also need to take into account that the user might enter data and try to interact with the page before the appropriate listeners/handlers have been attached.
 

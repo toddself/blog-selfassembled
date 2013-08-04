@@ -16,7 +16,7 @@ In my previous post I showed a drop-in Backbone.Sync replacement for saving mode
 
 So how do we selectively override attaching our custom sync method? Honestly that depends on what module system you're using for your code on the front end. I'll show [RequireJS/AMD](http://requirejs.org/) and [Browserify](http://browserify.org/) versions below. If you're using Stitch or something else, you're on your own, but you should have a good start here. (But you should look into Browserify!)
 
-## RequireJS
+#### RequireJS
 
 With RequireJS we're going to need to make it so that the `define` method that RequireJS relies upon is available on the back end (and can pull back in your defined module from the `return` statement), so we'll use the `amdefine` package to handle this. Using the `typeof define` switch also provides a decent hook to determine that we're on the backend.
 
@@ -62,7 +62,7 @@ Of course you'll need to shim Backbone, Underscore and jQuery in for this to wor
       }
     });
 
-## Browserify
+#### Browserify
 
 I am a recent convert to the world of browserify for certain contexts (mainly when your entire code base is done in JavaScript), and this makes it even easier:
 

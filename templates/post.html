@@ -16,38 +16,39 @@
 {% endblock %}
 
 {% block content %}
-<article class="pam">
-    <h1 class="inline">{{ title }}</h1>
-    <h5 class="inline"><time pubdate="pubdate">{{ date|date:"F j, Y g:i a" }}</time></h5>
+<article>
+    <h2>{{ title }}</h1>
+    <h5><time pubdate="pubdate">{{ date|date:"F j, Y g:i a" }}</time></h5>
     <br style="clear: both;">
     <section class="post">
         {% block body %}{% endblock %}
     </section>
-    <nav>
-        <span class="prev">
+
+    <ul class="pagination">
+        <li {% if prevPost %}{% else %}class="inactive"{% endif %}>
             {% if prevPost %}
-                <a href='{{ ROOT_URL }}/{{ prevPost.path }}'>
-                    &laquo; {{ prevPost.title }}
-                </a>
+                <a href='{{ ROOT_URL }}/{{ prevPost.path }}'>&laquo; {{ prevPost.title }}</a>
             {% else %}
                 Earliest post
             {% endif %}
-        </span>
-        &nbsp;|&nbsp;
-        <span class="next">
+        </li>
+        <li {% if nextPost %}{% else %}class="inactive"{% endif %}>
             {% if nextPost %}
-                <a href='{{ ROOT_URL }}/{{ nextPost.path }}'>
-                    {{ nextPost.title }} &raquo;
-                </a>
+                <a href='{{ ROOT_URL }}/{{ nextPost.path }}'>{{ nextPost.title }} &raquo;</a>
             {% else %}
                 Latest post
             {% endif %}
+        </li>
+    </ul>
+
+    <section class="well">
+        <h3>About the Author</h2>
+        <span class="pull-left">
+            <img class="media-object" src="http://www.gravatar.com/avatar/53bdac9d82783ce85a5ccb837ce7bc08.png" style="padding: 0 10px 10px 0;">
         </span>
-    </nav>
-    <h2 style="margin-bottom: 0px;">About the Author</h2>
-    <img src="http://www.gravatar.com/avatar/53bdac9d82783ce85a5ccb837ce7bc08.png" style="float: left; width: 80px; height: 80px">
-    <p style="margin-top: 4px;">My name is Todd Kennedy, and I'm the Tech Lead at <a href="https://cntraveler.com">Condé Nast Traveler</a> where I am responsible for our engineering team and the site. I've previously been employed at <a href="https://updater.com">Updater</a>, <a href="http://getspun.com">Spun</a> (neé <a href="https://broadcastr.com/">Broadcastr</a>), <a href="http://www.nbcuni.com/">NBCUniversal</a>, <a href="http://www.viacom.com/Pages/default.aspx">Viacom</a> and a <a href="http://tripod.com">slew of previous</a> start-ups</p>
-    <p><strong>The content on this blog does not reflect the views or positions of my employer, and should not be read to Mogwai after midnight.</strong></p>
-    <p>I can be contacted via <a href="https://twitter.com/whale_eat_squid">twitter</a> or e-mail which is just my first and last name @gmail.com.</p>
+        <p style="margin-top: 4px;">My name is Todd Kennedy, and I'm the Tech Lead at <a href="https://cntraveler.com">Condé Nast Traveler</a> where I am responsible for our engineering team and the site. I've previously been employed at <a href="https://updater.com">Updater</a>, <a href="http://getspun.com">Spun</a> (neé <a href="https://broadcastr.com/">Broadcastr</a>), <a href="http://www.nbcuni.com/">NBCUniversal</a>, <a href="http://www.viacom.com/Pages/default.aspx">Viacom</a> and a <a href="http://tripod.com">slew of previous</a> start-ups</p>
+        <p><strong>The content on this blog does not reflect the views or positions of my employer, and should not be read to Mogwai after midnight.</strong></p>
+        <p>I can be contacted via <a href="https://twitter.com/whale_eat_squid">twitter</a> or e-mail which is just my first and last name @gmail.com.</p>
+    </section>
 </article>
 {% endblock %}

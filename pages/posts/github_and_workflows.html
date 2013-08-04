@@ -23,8 +23,11 @@ Back in the mid-fall we hired a former Hooters-wing-eating-contest-champion/dev-
 
 We would hence forth **ONLY** work on branches &#151; each ticket in our tracking system ([JIRA](https://jira.com) if you must know, and thank you [MTV](http://mtvnetworks.com) for training me on how to use it over four years) would become a new branch modeled after `[ticket type]/[ticket ID]`. So, bug number 123 in the WEB project in Jira would become `bug/WEB-123`. If multiple developers are working together to write a new feature, we first branch that feature off of development as `feature/awesome_new_project`, and then we all make our branches off of that for each ticket. Each time the ticket is complete, we make a pull-request back to the "parent" branch (either `development` or the `feature/awesome_new_project` branch).
 
+
 ![branching diagram](/static/img/branching.png)
+<br>
 *The complexity of this graph shows we're very productive*
+
 
 These pull-requests serve two primary purposes:
 
