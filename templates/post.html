@@ -25,18 +25,18 @@
     </section>
 
     <ul class="pagination">
-        <li {% if prevPost %}{% else %}class="inactive"{% endif %}>
+        <li {% if prevPost %}{% else %}class="disabled"{% endif %}>
             {% if prevPost %}
                 <a href='{{ ROOT_URL }}/{{ prevPost.path }}'>&laquo; {{ prevPost.title }}</a>
             {% else %}
-                Earliest post
+                <a href="#">Earliest post</a>
             {% endif %}
         </li>
-        <li {% if nextPost %}{% else %}class="inactive"{% endif %}>
+        <li {% if nextPost %}{% else %}class="disabled"{% endif %}>
             {% if nextPost %}
                 <a href='{{ ROOT_URL }}/{{ nextPost.path }}'>{{ nextPost.title }} &raquo;</a>
             {% else %}
-                Latest post
+                <a href="#">Latest post</a>
             {% endif %}
         </li>
     </ul>
