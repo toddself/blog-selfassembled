@@ -3,7 +3,7 @@
     {% for post in posts %}
         <article>
             <h2><a style="color: #000;" href="/{{ post.path }}">{{ post.title }}</a></h1>
-            <time pubdate="pubdate">{{ post.date|date:"F j, Y g:i a" }}</time>
+            <h5 style="display: inline-block"><time pubdate="pubdate">{{ post.date|date:"F j, Y g:i a" }}</time></h5> | <a style="color: #000;" href="/{{ post.path }}#disqus_thread"></a>
             <br style="clear: both;">
             <section class="post">
                 {{ post.body }}
