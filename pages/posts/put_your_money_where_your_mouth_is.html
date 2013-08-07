@@ -1,0 +1,65 @@
+title: Putting Your Money Where Your Mouth Is
+author: Todd Kennedy
+date: 07-09-2013T12:00
+description: A rundown of MongoSync and the changes needed to support module systems
+keywords: node.js, browserify, requirejs, npm, javascript, mongo, mongojs, mongosync
+
+{% extends "post.html" %}
+{% block body %}
+
+{% load markup %}
+{% filter markdown %}
+
+In my previous<sup>[1](#post1)</sup> posts<sup>[2](#post2)</sup> I've been talking about a method for sharing Backbone models between the front and back end so you can unify that part of your code base.
+
+After a few minutes of thinking about this I said this would probably make a great module that you can import rather than having to cut and paste between a bunch of files on some asshole's blog.
+
+It's published both into [NPM](https://npmjs.org/package/mongosync) and [Bower](http://sindresorhus.com/bower-components/) depending on how you like to organize your code, so fire up your command lines and do a little `npm install mongosync` or `bower install mongosync`. The NPM version works with [Browserify](http://browserify.org/), either standalone or bundled into a package as part of a larger project.
+
+The most beguiling part by far was managing to have the code export itself correctly depending on how you want to package your stuff, being three main choices: [RequireJS](http://requirejs.org), [CommonJS](http://wiki.commonjs.org/wiki/Modules/1.1) or, for the brave, foolish or bold, it'll even attach itself directly to the context in which it is run (so, for many people using a plain old `<script>` tag, the `window` object.)
+
+Thanks to some help from [@thlorenz](http://thlorenz.com), this wasn't super hard to do:
+
+    if(typeof exports !== 'undefined'){
+        module.exports = SharedModel;
+    } else if (typeof define === 'function' && define.amd ){
+        define(function(){
+            return SharedModel;
+        });
+    } else {
+        global.SharedModel = SharedModel;
+    }
+
+We just have to do some detection to figure out if `exports` (commonJS) is available, and if so, great, lets attach this to `module.exports`. If that's not there, we should look to see if we're in a AMD/define condition (RequireJS) and then actually make a `define()` call, and then finally attach ourselves to the `global` object (which is passed in as the outer closure's `this` by the IIFE wrapper.)
+
+The other thing that I changed is that this actually returns a `Backbone.Model` instance with correct version of `Backbone.Sync` attached as well as the `idAttribute` set to `_id`. So instead of having to handle the logic behind swapping out sync on your own, it handles that and then returns the model itself for you to `.extend()` away from.
+
+More accurately though, it actually retuns a function which then returns the model instance. This allows you to pass in the server and collection name to MongoJS.
+
+
+    SharedModel = function(db, coll){
+        // this part can only run on the backend, `process.browser` is from browserify
+        // and allows browserify to determine it's on the server
+        if(typeof process !== 'undefined' && !process.browser && typeof exports !== 'undefined'){
+          server_name = db;
+          collection_name = coll;
+          Backbone.sync = sync;
+        }
+
+        var model = Backbone.Model.extend({idAttribute: '_id'});
+        return model;
+    };
+
+In here however, we have to be careful to get our context right. If we're using Browserify we need to ensure that we're not in the browser, which we can test by the non-existance of `process.browser` (in plain node `browser` is undefined, so that works for that use-case as well) and the existance of `exports`. Then it's simply setting the passed in db and collection names to the closure's placeholder variables, that the replaced `sync` method also references and then passing back the model.
+
+Wrapping this all up with the sync method (pretty much wholesale from the earlier post), and we're all set! The biggest caveat is that this doesn't work for collections correctly yet, but that work is already underway.
+
+[Source on Github](https://github.com/CondeNast/MongoSync)
+
+<sup>1</sup> <a name="post1">[Don't Repeat Yourself - Share With Yourself](http://blog.selfassembled.org/posts/sharing_models.html)</a>
+
+<sup>2</sup> <a href="post2">[Context Aware Backbone Models](http://blog.selfassembled.org/posts/sharing_models_part_2.html)</a>
+
+
+{% endfilter %}
+{% endblock %}
