@@ -14,8 +14,6 @@ By now many of you have probably heard about the new project from Facebook calle
 
 We did some investigation into the library at Condé Nast after a coworker brought it up while we were reviewing schemes for server-side rendering of javascript app content for indexing by Google, Facebook, Twitter, etc, so this prompted a deeper inspection into the toolkit.  The first thing to get my head wrapped around was the custom DOM creation and manipulation syntax they call JSX.
 
-(Note: this was all done on ReactJS 0.4.0 &#151; the new version definitely fixes some of the minor quibbles.)
-
 ##Lets start with the elephant in the room: JSX?
 
 Is this some sort of template language? Specifically no. This might have been the first big stumbling block. What looks like to be a templating language is actually an in-line DSL that gets transpiled directly into JavaScript by the JSX transpiler.
@@ -43,11 +41,42 @@ So now for the next question, what is `React.DOM` and where does it come from? S
 
 This is where the "it's not a template language" rings totally true. We aren't actually writing HTML in our source, we're short-cutting using the React.DOM object and it's methods directly.<sup>[1](#11122013_1)</sup>.
 
-But E4X-ishness aside, there are still some immediate problems with this syntax:
+##OK. So what's the point of a DOM DSL?
+
+First we need to start with a statement: DOM manipulation is slow.
+
+Running this extremely reactive case:
+
+    console.time('copyevery');
+    var ul = document.createElement('ul');
+    document.body.appendChild(ul);
+    for(var i = 0; i > 100000; i++){
+        ul.appendChild(document.createElement('li'));
+    }
+    console.timeEnd('copyevery');
+
+Is slower than:
+
+    console.time('copyonce')
+    var ul = document.createElement('ul');
+    for(var j = 0; j > 100000; j++){
+        ul.appendChild(document.createElement('li'));
+    }
+    document.body.appendChild(ul);
+    console.timeEnd('copyonce');
+
+![results in Firefox Aurora 27.0a2 (2013-11-10)](/static/img/results.png)
+
+([jsfiddle](http://jsfiddle.net/b2jwp/))
+
+Creating elements in memory is quick -- copying those elements into the DOM is where the slowness occurs. This is due to a variety of issues, most namely reflow/paint. Changing the items in the DOM causes the browser to re-paint the display, apply styles, etc. We want to keep those operations to an absolute minimum, especially if we're dealing with something that needs to update the DOM frequently. (Like Facebook's constant stream of crap.) What JSX attempts to fix is DOM manipulation specifically. When you work with JSX or the React.DOM object, you're working on a sort of "shadow DOM" that handles all the state changes and gets the new version of the DOM, compares it to the current version in the browser, and then only makes the necessary changes to the current DOM. The downside to this? Directly manipulating the DOM is a) difficult and b) not recommended since you lose most of what you're using React for in the first place.
+
+Which leads me to my summary of JSX:
 
 1. In the third line of the source example we've got a `this.props.state ===` ternary operator. All the bally-hoo about logic-less and less-logic templates aside, in *most*<sup>[2](#11122013_2)</sup> templating languages you can't just throw in any random JavaScript statement, but rather must use the template's specific DSL to effect logic. JSX, however, since it's "just JavaScript" allows for inline execution of arbitrary JavaScript.
 1. JSX files are un-lintable without extending the tools used for linting.<sup>[3](#11122013_3)</sup>
 1. The developers are required to update the React.DOM class with any new HTML tags that might be implemented, if you require custom DOM elements for some other purpose, you'll need to write your own mixin to allow rendering of these components in your site.
+1. It becomes extremely difficult to use jQuery/mootools/etc and their ecosystems of plugins without doing some custom work with them. (More on this in another post).
 
 <span id="11122013_1" class="footnote"><sup>1</sup>This is why they say [JSX is not required for using React](http://facebook.github.io/react/docs/jsx-in-depth.html). You can write your HTML out directly using the `React.DOM` syntax. Kind of a Fasutian bargain if you ask me...</span>
 
