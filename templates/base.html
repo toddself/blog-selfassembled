@@ -10,7 +10,7 @@
     <link href="http://feeds.feedburner.com/selfassembled" rel="alternate" type="application/rss+xml" />
     <link href='http://fonts.googleapis.com/css?family=Rambla:700|Source+Code+Pro|Source+Sans+Pro' rel='stylesheet' type='text/css'>
     <style>
-        .gist {
+    .gist {
         display: none;
     }
 
@@ -42,20 +42,25 @@
     code {
         font-family: 'Source Code Pro', sans-serif;
     }
+
+    .footnote {
+        font-size: 90%;
+    }
+
     </style>
     <!--[if lt IE 9]>
         <script src="{{ STATIC_URL }}/js/html5shiv.js"></script>
     <![endif]-->
 
 	{% block header %}
-    <meta content="blog.selfassembled.org" name="title">
+    <meta content="tck.io" name="title">
     <meta content="A blog about technology, javascript, backbone, node and python" name="description">
     <meta content="javascript, backbone, js, node, nodejs, python, programming" name="keywords">
-    <meta property="og:title" content="blog.selfassembled.org">
+    <meta property="og:title" content="tck.io">
     <meta property="og:type" content="website">
-    <meta property="og:url" content="http://blog.selfassembled.org/">
+    <meta property="og:url" content="http://tck.io/">
     <meta property="og:description" content="A blog about technology, javascript, backbone, node and python">
-	<title>selfassembled.org</title>
+	<title>tck.io</title>
 	{% endblock %}
 
 </head>
@@ -67,7 +72,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <h1><a class="navbar-brand" href="/">blog.selfassembled.org</a></h1>
+            <h1><a class="navbar-brand" href="/">tck.io</a></h1>
             <div class="nav-collapse collapse navbar-responsive-collapse">
                 <ul class="nav navbar-nav">
                     <li><a href="{{ ROOT_URL }}/about.html">about</a>
@@ -85,7 +90,7 @@
 
     {% block footer %}
     <footer>
-        <span class="copy"><a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/deed.en_US"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-sa/3.0/80x15.png" /></a> <span xmlns:dct="http://purl.org/dc/terms/" property="dct:title">blog.selfassembled.org</span> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/deed.en_US">Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License</a>.</span><br>
+        <span class="copy"><a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/deed.en_US"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-sa/3.0/80x15.png" /></a> <span xmlns:dct="http://purl.org/dc/terms/" property="dct:title">tck.io</span> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/deed.en_US">Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License</a>.</span><br>
         All code examples Copyright &copy; 2013 Todd Kennedy. Released under the <a href="http://opensource.org/licenses/MIT">MIT Licence</a><br>
         Site built using <a href="https://github.com/koenbok/Cactus">Cactus</a>
     </footer>

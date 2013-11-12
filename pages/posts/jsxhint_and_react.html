@@ -1,0 +1,61 @@
+title: JSXHint, ReactJS and Pre-Mature Optimization
+author: Todd Kennedy
+date: 11-12-2013T08:53
+description: A tool for linting JSX files, and some thoughts about ReactJS
+keywords: reactjs, react, jsx, jshint, lint, javascript, facebook, instagram
+
+{% extends "post.html" %}
+{% block body %}
+
+{% load markup %}
+{% filter markdown %}
+
+By now many of you have probably heard about the new project from Facebook called [ReactJS](http://facebook.github.io/react/). There was a lot of buzz gained about it around the time their [Javascript Jabber interview](http://javascriptjabber.com/073-jsj-react-with-pete-hunt-and-jordan-walke/) was released.
+
+We did some investigation into the library at Condé Nast after a coworker brought it up while we were reviewing schemes for server-side rendering of javascript app content for indexing by Google, Facebook, Twitter, etc, so this prompted a deeper inspection into the toolkit.  The first thing to get my head wrapped around was the custom DOM creation and manipulation syntax they call JSX.
+
+(Note: this was all done on ReactJS 0.4.0 &#151; the new version definitely fixes some of the minor quibbles.)
+
+##Lets start with the elephant in the room: JSX?
+
+Is this some sort of template language? Specifically no. This might have been the first big stumbling block. What looks like to be a templating language is actually an in-line DSL that gets transpiled directly into JavaScript by the JSX transpiler.
+
+We write this:
+
+    /** @jsx React.DOM */
+    <div class="alert">
+        <button type="button" class="close" onClink={this.closeHandler}>&times;</button>
+        Status for {this.props.data.get('brandLead')} was {this.props.state === 'failure' ? 'not' : ''} saved
+    </div>
+
+
+(Be honest. First reaction: Gah. That looks likes [E4X](https://developer.mozilla.org/en-US/docs/E4X).) Yeah, yeah, I know, but like ignore that for a minute, since after we run the JSX transpiler on this, we get:
+
+
+    React.DOM.div( {className:"alert"},
+                  React.DOM.button( {type:"button", className:"close", onClick:this.closeHandler}, "×"),
+    " Status for ", this.props.data.get('brandLead'), " was ", this.props.state === 'failure' ? 'not' : '', " saved "            )
+
+
+(Whitespacing is intentional - this is a cut and paste from the output) Much better? Right? Eh. Sort of. At least we're not relying on a partially implemented ECMA standard this time.
+
+So now for the next question, what is `React.DOM` and where does it come from? See that `/* @jsx React.DOM */` comment? That's a transpiler directive that tells the JSX transpiler to load the React.DOM object and look for the tags you've defined in your HTML snippet as functions in that object.
+
+This is where the "it's not a template language" rings totally true. We aren't actually writing HTML in our source, we're short-cutting using the React.DOM object and it's methods directly.<sup>[1](#11122013_1)</sup>.
+
+But E4X-ishness aside, there are still some immediate problems with this syntax:
+
+1. In the third line of the source example we've got a `this.props.state ===` ternary operator. All the bally-hoo about logic-less and less-logic templates aside, in *most*<sup>[2](#11122013_2)</sup> templating languages you can't just throw in any random JavaScript statement, but rather must use the template's specific DSL to effect logic. JSX, however, since it's "just JavaScript" allows for inline execution of arbitrary JavaScript.
+1. JSX files are un-lintable without extending the tools used for linting.<sup>[3](#11122013_3)</sup>
+1. The developers are required to update the React.DOM class with any new HTML tags that might be implemented, if you require custom DOM elements for some other purpose, you'll need to write your own mixin to allow rendering of these components in your site.
+
+<span id="11122013_1" class="footnote"><sup>1</sup>This is why they say [JSX is not required for using React](http://facebook.github.io/react/docs/jsx-in-depth.html). You can write your HTML out directly using the `React.DOM` syntax. Kind of a Fasutian bargain if you ask me...</span>
+
+<span id="11122013_2" class="footnote"><sup>2</sup>I understand that [underscore's templates](http://underscorejs.org/#template) allow for direct JavaScript interpolation, but the majority do not.</span>
+
+<span id="11122013_3" class="footnote"><sup>3</sup>Probably befitting it's own post, I created [JSXHint](https://github.com/CondeNast/JSXHint) to be able to lint files containing JSX syntax directly. (It transpiles them on the fly and then checks the output).</span>
+
+We'll dive deeper into React (leaving JSX's utility as an argument for the reader since it's really opinion based more than anything) in the next post.
+
+{% endfilter %}
+{% endblock %}

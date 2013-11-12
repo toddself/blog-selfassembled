@@ -6,13 +6,13 @@
     <meta property="og:title" content="{{ title }}">
     <meta property="og:type" content="article">
     {% if image %}<meta property="og:image" content="{{ image }}">{% endif %}
-    <meta property="og:url" content="http://blog.selfassembled.org/{{ path }}">
+    <meta property="og:url" content="http://blog.tck.io/{{ path }}">
     <meta property="og:description" content="{{ description }}">
     <meta property="article:published_time" content="{{ date|date:'c' }}">
     <meta property="article:modified_time" content="{{ modified|date:'c' }}">
     <meta property="article:author" content="{{ author }}">
     <meta property="article:tag" content="{{ keywords}}">
-    <title>{{ title }} &#171; selfassembled.org</title>
+    <title>{{ title }} &#171; tck.io</title>
 {% endblock %}
 
 {% block content %}
