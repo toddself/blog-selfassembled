@@ -107,8 +107,8 @@
       m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
       })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-      ga('create', 'UA-45706980-1', 'tck.io');
-      ga('send', 'pageview');
+      ga('create', 'UA-45706980-1',  {'storage': 'none', 'clientId': (new Date()).getTime()});
+      ga('send', 'pageview', {'anonymizeIp': true});
 
         $(function(){
             // make all the gists hidden so you have to toggle to view them
